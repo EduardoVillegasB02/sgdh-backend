@@ -51,7 +51,7 @@ export class CommitteeService {
       this.prisma.committee,
       {
         where,
-        orderBy: { lastname: 'asc' },
+        orderBy: { code: 'asc' },
       },
       pagination,
     );
