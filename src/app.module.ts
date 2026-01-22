@@ -1,13 +1,42 @@
 import { Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { AuthModule } from './modules/auth/auth.module';
 import { AuditModule } from './modules/audit/audit.module';
-import { UserModule } from './modules/user/user.module';
+import { AuthModule } from './modules/auth/auth.module';
+import { RoleModule } from './modules/infrastructure/role/role.module';
 import { SessionModule } from './modules/session/session.module';
+import { UserModule } from './modules/user/user.module';
+import { PrismaModule } from './prisma/prisma.module';
+import { PermissionModule } from './modules/infrastructure/permission/permission.module';
+import { AccessModule } from './modules/infrastructure/access/access.module';
+import { AssignmentModule } from './modules/infrastructure/assignment/assignment.module';
+import { ModuleModule } from './modules/infrastructure/module/module.module';
+import { CoordinatorModule } from './modules/management/subprogram/pvl/coordinator/coordinator.module';
+import { ComitteeModule } from './modules/management/subprogram/pvl/committee/committee.module';
+import { CoupleModule } from './modules/management/subprogram/pvl/couple/couple.module';
+import { TownModule } from './modules/management/subprogram/pvl/town/town.module';
+import { ConfigModule } from '@nestjs/config';
 
 @Module({
-  imports: [AuthModule, AuditModule, UserModule, SessionModule],
+  imports: [
+    ConfigModule.forRoot({
+      isGlobal: true,
+    }),
+    AuditModule,
+    AuthModule,
+    RoleModule,
+    SessionModule,
+    UserModule,
+    PrismaModule,
+    PermissionModule,
+    AccessModule,
+    AssignmentModule,
+    ModuleModule,
+    CoordinatorModule,
+    ComitteeModule,
+    CoupleModule,
+    TownModule,
+  ],
   controllers: [AppController],
   providers: [AppService],
 })

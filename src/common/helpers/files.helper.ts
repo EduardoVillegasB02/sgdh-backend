@@ -5,7 +5,7 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { Evidence } from '@prisma/client';
+//import { Evidence } from '@prisma/client';
 import * as fs from 'fs';
 import * as path from 'path';
 import { v4 as uuidv4 } from 'uuid';
@@ -39,7 +39,7 @@ export function getResolvedFilePath(
   return fullPath;
 }
 
-export function verifyUpdateFiles(
+/* export function verifyUpdateFiles(
   files: Array<Express.Multer.File>,
   descriptions: string[] | string,
   evidences: Evidence[],
@@ -59,7 +59,7 @@ export function verifyUpdateFiles(
     throw new BadRequestException(
       'Todas las descripciones deben contener texto',
     );
-}
+} */
 
 function getBasePath(configService: ConfigService): string {
   const basePath = configService.get<string>('FILES_PATH');

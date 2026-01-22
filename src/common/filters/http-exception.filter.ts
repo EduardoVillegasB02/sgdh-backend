@@ -41,7 +41,7 @@ export class AllExceptionsFilter implements ExceptionFilter {
     const modelKey = Object.keys(Model).find((m) =>
       baseUrl.toUpperCase().includes(m),
     ) as Model | undefined;
-    const model = modelKey ?? Model.USER;
+    const model = modelKey;
     const action =
       method === 'POST'
         ? Action.CREATE
@@ -68,7 +68,7 @@ export class AllExceptionsFilter implements ExceptionFilter {
       description = `Error: ${exception.message}`;
     else if (exception instanceof Error)
       description = `Error: ${exception.message}`;
-    try {
+    /* try {
       await this.auditService.auditAuth({
         status: auditStatus,
         description,
@@ -79,7 +79,7 @@ export class AllExceptionsFilter implements ExceptionFilter {
       });
     } catch (error) {
       this.logger.error('Error el registro de auditoría:', error);
-    }
+    } */
     httpAdapter.reply(ctx.getResponse(), responseBody, httpStatus);
   }
 }

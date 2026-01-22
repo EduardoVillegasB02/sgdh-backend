@@ -1,18 +1,22 @@
 generator client {
   provider = "prisma-client-js"
+  previewFeatures = ["multiSchema"]
 }
 
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
+  schemas  = ["auth", "pvl"]
 }
 
+// >> SCHEMA: AUTH
 enum Ability {
   CREATE
   READ
   UPDATE
   DELETE
   ASSIGN
+  @@schema("auth")
 }
 
 enum Action {
@@ -24,10 +28,12 @@ enum Action {
   LOGOUT
   RESTORE
   UPDATE
+  @@schema("auth")
 }
 
 enum Model {
   AUTH
+  @@schema("auth")
 }
 
 enum Resource {
@@ -35,12 +41,14 @@ enum Resource {
   INCIDENCE
   USER
   REPORT
+  @@schema("auth")
 }
 
 enum Status {
   BLOCKED
   FAILED
   SUCCESS
+  @@schema("auth")
 }
 
 model Access {
@@ -52,6 +60,8 @@ model Access {
   permission                    Permission                      @relation(fields: [permission_id], references: [id])
   role                          Role                            @relation(fields: [role_id], references: [id])
   @@unique([permission_id, role_id])
+  @@map("access")
+  @@schema("auth")
 }
 
 model Assignment {
@@ -67,6 +77,8 @@ model Assignment {
   role                          Role                            @relation(fields: [role_id], references: [id])
   user                          User                            @relation(fields: [user_id], references: [id])
   @@unique([module_id, program_id, role_id, user_id])
+  @@map("assignment")
+  @@schema("auth")
 }
 
 model Audit {
@@ -87,6 +99,8 @@ model Audit {
   @@index([model])
   @@index([status])
   @@index([user_id])
+  @@map("audit")
+  @@schema("auth")
 }
 
 model Permission {
@@ -96,7 +110,9 @@ model Permission {
   action                        Ability
   resource                      Resource
   accesses                      Access[]   
-  @@unique([action, resource])      
+  @@unique([action, resource])
+  @@map("permission")
+  @@schema("auth")
 }
 
 model Program {
@@ -106,6 +122,8 @@ model Program {
   deleted_at                    DateTime?
   assignments                   Assignment[]
   modules                       Module[]
+  @@map("program")
+  @@schema("auth")
 }
 
 model Module {
@@ -118,6 +136,8 @@ model Module {
   assignments                   Assignment[]
   @@index([program_id])
   @@unique([name, program_id])
+  @@map("module")
+  @@schema("auth")
 }
 
 model Role {
@@ -128,6 +148,8 @@ model Role {
   deleted_at                    DateTime?
   accesses                      Access[]  
   assignments                   Assignment[]
+  @@map("role")
+  @@schema("auth")
 }
 
 model User {
@@ -144,4 +166,79 @@ model User {
   deleted_at                    DateTime?
   assignments                   Assignment[]
   audits                        Audit[]
+  @@map("user")
+  @@schema("auth")
+}
+
+// >> SCHEMA: PVL
+enum Route {
+  A
+  B
+  C
+  D
+  @@schema("pvl")
+}
+
+model Committee {
+  id                            String                          @id @default(uuid())
+  code                          String                          @unique
+  name                          String  
+  address                       String?
+  latitude                      Float
+  longitude                     Float
+  beneficiaries                 Int                             @default(0)
+  beneficiaries_foreign         Int                             @default(0)
+  members                       Int                             @default(0)
+  handicappeds                  Int                             @default(0)
+  commune                       Int                             @default(0)
+  observation                   String
+  coordinator_id                String
+  couple_id                     String
+  town_id                       String
+  route                         Route
+  coordinator                   Coordinator                     @relation(fields: [coordinator_id], references: [id])
+  couple                        Couple                          @relation(fields: [couple_id], references: [id])
+  town                          Town                            @relation(fields: [town_id], references: [id])
+  created_at                    DateTime                        @default(now())
+  updated_at                    DateTime                        @updatedAt
+  deleted_at                    DateTime?
+  @@map("committee")
+  @@schema("pvl")
+}
+
+model Coordinator {
+  id                            String                          @id @default(uuid())
+  name                          String
+  lastname                      String
+  dni                           String?
+  phone                         String?
+  birthday                      String?
+  created_at                    DateTime                        @default(now())
+  updated_at                    DateTime                        @updatedAt
+  deleted_at                    DateTime?
+  comittees                     Committee[]
+  @@map("coordinator")
+  @@schema("pvl")
+}
+
+model Couple {
+  id                            String                          @id @default(uuid())
+  name                          String                          @unique
+  created_at                    DateTime                        @default(now())
+  updated_at                    DateTime                        @updatedAt
+  deleted_at                    DateTime?
+  comittees                     Committee[]
+  @@map("couple")
+  @@schema("pvl")
+}
+
+model Town {
+  id                            String                          @id @default(uuid())
+  name                          String                          @unique
+  created_at                    DateTime                        @default(now())
+  updated_at                    DateTime                        @updatedAt
+  deleted_at                    DateTime?
+  comittees                     Committee[]
+  @@map("town")
+  @@schema("pvl")
 }
