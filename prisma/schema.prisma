@@ -191,7 +191,7 @@ model Committee {
   members                       Int                             @default(0)
   handicappeds                  Int                             @default(0)
   commune                       Int                             @default(0)
-  observation                   String
+  observation                   String?
   coordinator_id                String
   couple_id                     String
   town_id                       String

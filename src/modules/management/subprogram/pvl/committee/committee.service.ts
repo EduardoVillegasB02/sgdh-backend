@@ -119,7 +119,7 @@ export class CommitteeService {
     const rows = xlsx.utils.sheet_to_json(workbook.Sheets[sheetName]);
     const data = rows.map((row: any) => {
       return {
-        code: row.code,
+        code: String(row.code),
         name: row.name,
         address: row.address ?? null,
         latitude: Number(row.latitude),
@@ -131,16 +131,30 @@ export class CommitteeService {
         members: row.members ? Number(row.members) : 0,
         handicappeds: row.handicappeds ? Number(row.handicappeds) : 0,
         commune: row.commune ? Number(row.commune) : 0,
-        observation: row.observation ?? null,
-        coordinator_id: row.coordinator_id,
-        couple_id: row.couple_id,
-        town_id: row.town_id,
+        coordinator: String(row.dni),
+        couple: row.couple_id,
+        town: row.town_id,
         route: row.route,
         created_at: timezoneHelper(),
         updated_at: timezoneHelper(),
       };
     });
-    await this.prisma.committee.createMany({ data });
+    const result: any = [];
+    for (const d of data) {
+      const coordinatord = await this.prisma.coordinator.findFirst({ where: { dni: d.coordinator } });
+      const coupled = await this.prisma.couple.findFirst({ where: { name: d.couple } });
+      const townd = await this.prisma.town.findFirst({ where: { name: d.town } });
+      if (!coordinatord || !coupled || !townd)
+        throw new BadRequestException('No hay ID');
+      const { coordinator, couple, town, ...res } = d;
+      result.push({
+        coordinator_id: coordinatord.id,
+        couple_id: coupled.id,
+        town_id: townd.id,
+        ...res,
+      })
+    }
+    await this.prisma.committee.createMany({ data: result });
     return { success: true };
   }
 
