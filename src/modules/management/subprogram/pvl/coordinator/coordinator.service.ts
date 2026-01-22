@@ -86,10 +86,10 @@ export class CoordinatorService {
     const data = rows.map((row: any) => {
       return {
         name: row.name,
-        lastname: row.lastname,
-        dni: row.dni ?? null,
-        phone: row.phone ?? null,
-        birthday: row.birthday ?? null,
+        lastname: row.lastname ?? row.name,
+        dni: row.dni ? String(row.dni) : null,
+        phone: row.phone ? String(row.phone) : null,
+        birthday: row.birthday ? String(row.birthday) : null,
         created_at: timezoneHelper(),
         updated_at: timezoneHelper(),
       };
