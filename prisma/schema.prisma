@@ -6,7 +6,7 @@ generator client {
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
-  schemas  = ["auth", "pvl"]
+  schemas  = ["auth", "pvl","ule"]
 }
 
 // >> SCHEMA: AUTH
@@ -170,6 +170,8 @@ model User {
   @@schema("auth")
 }
 
+
+
 // >> SCHEMA: PVL
 enum Route {
   A
@@ -178,6 +180,7 @@ enum Route {
   D
   @@schema("pvl")
 }
+
 
 model Committee {
   id                            String                          @id @default(uuid())
@@ -241,4 +244,38 @@ model Town {
   comittees                     Committee[]
   @@map("town")
   @@schema("pvl")
+}
+
+// >> SHEME:ULE
+model Enrolled{
+  id                            String                          @id @default(uuid())
+  dni                           String                          @unique
+  names                         String
+  lastname                      String
+  adress                        String?
+  program                       Social                          @relation(fields: [program_id], references: [id])
+  program_id                    String
+  created_at                    DateTime                        @default(now())
+  deleted_at                    DateTime?
+  @@map("enrolled")
+  @@schema("ule")
+}
+model Social{
+  id                            String                          @id @default(uuid())
+  name                          String                          @unique
+  created_at                    DateTime                        @default(now())
+  deleted_at                    DateTime?
+  enrolleds                     Enrolled[]
+  @@map("social")
+  @@schema("ule")
+}
+model Enumerator{
+  id                            String                          @id @default(uuid())
+  dni                           String                          @unique
+  name                          String
+  lastname                      String
+  created_at                    DateTime                        @default(now())
+  deleted_at                    DateTime?
+  @@map("enumerator")
+  @@schema("ule")
 }
