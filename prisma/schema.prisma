@@ -6,7 +6,7 @@ generator client {
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
-  schemas  = ["auth", "pvl"]
+  schemas  = ["auth", "pvl", "pca"]
 }
 
 // >> SCHEMA: AUTH
@@ -168,6 +168,62 @@ model User {
   audits                        Audit[]
   @@map("user")
   @@schema("auth")
+}
+
+enum Modality {
+  common_pot
+  @@schema("pca")
+}
+
+// >> SCHEMA: PCA
+model Center {
+  id                String      @id @default(uuid())
+  code              String      @unique
+  name              String
+  address           String?
+  members_male      Int         @default(0)
+  members_female    Int         @default(0)
+  sex               String
+  latitude          Float
+  longitude         Float
+  created_at        DateTime    @default(now())
+  updated_at        DateTime    @updatedAt
+  deleted_at        DateTime?
+  president_id      String
+  directive_id      String
+  president         President?  @relation(fields: [president_id], references: [id])
+  directive         Directive?  @relation(fields: [directive_id], references: [id])
+  @@map("center")
+  @@schema("pca")
+}
+
+model President {
+  id                String      @id @default(uuid())
+  name              String
+  lastname          String
+  dni               String?
+  sex               String
+  phone             String?
+  birthday          String?
+  created_at        DateTime    @default(now())
+  updated_at        DateTime    @updatedAt
+  deleted_at        DateTime?
+  centers           Center[]
+  @@map("president")
+  @@schema("pca")
+}
+
+model Directive {
+  id                String      @id @default(uuid())
+  resolution_number String      @unique
+  start_at          DateTime?
+  end_at            DateTime?
+  created_at        DateTime    @default(now())
+  updated_at        DateTime    @updatedAt
+  deleted_at        DateTime?
+  centers           Center[]
+  @@map("directive")
+  @@schema("pca")
 }
 
 // >> SCHEMA: PVL
