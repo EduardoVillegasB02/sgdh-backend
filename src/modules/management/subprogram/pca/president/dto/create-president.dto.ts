@@ -1,4 +1,5 @@
-import { IsOptional, IsString } from 'class-validator';
+import { Sex } from '@prisma/client';
+import { IsOptional, IsString, IsEnum } from 'class-validator';
 
 export class CreatePresidentDto {
   @IsString()
@@ -11,8 +12,8 @@ export class CreatePresidentDto {
   @IsString()
   dni?: string;
 
-  @IsString()
-  sex: string;
+  @IsEnum(Sex)
+  sex: Sex;
 
   @IsOptional()
   @IsString()
