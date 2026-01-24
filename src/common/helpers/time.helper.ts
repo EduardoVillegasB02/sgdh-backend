@@ -5,7 +5,7 @@
  * @param date Date | string | null
  * @param type "start" | "end"
  */
-export function fillTime(
+export function fullTimeHelper(
   date: Date | string | null,
   type: "start" | "end"
 ): Date | null {

@@ -1,5 +1,5 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
-import { Center, Model } from '@prisma/client';
+import { Center } from '@prisma/client';
 import * as xlsx from 'xlsx';
 import { CreateCenterDto, UpdateCenterDto } from './dto';
 import { PrismaService } from '../../../../../prisma/prisma.service';
