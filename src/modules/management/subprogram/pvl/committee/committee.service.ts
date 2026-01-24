@@ -52,6 +52,7 @@ export class CommitteeService {
       {
         where,
         orderBy: { code: 'asc' },
+        include: { coordinator: true, couple: true, town: true },
       },
       pagination,
     );

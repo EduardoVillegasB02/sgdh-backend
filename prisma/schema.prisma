@@ -6,17 +6,18 @@ generator client {
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
-  schemas  = ["auth", "pvl", "pca"]
+  directUrl = env("DIRECT_URL")
+  schemas  = ["initial", "pca", "pvl", "ule"]
 }
 
-// >> SCHEMA: AUTH
+// >> SCHEMA: initial
 enum Ability {
   CREATE
   READ
   UPDATE
   DELETE
   ASSIGN
-  @@schema("auth")
+  @@schema("initial")
 }
 
 enum Action {
@@ -28,12 +29,12 @@ enum Action {
   LOGOUT
   RESTORE
   UPDATE
-  @@schema("auth")
+  @@schema("initial")
 }
 
 enum Model {
-  AUTH
-  @@schema("auth")
+  initial
+  @@schema("initial")
 }
 
 enum Resource {
@@ -41,14 +42,14 @@ enum Resource {
   INCIDENCE
   USER
   REPORT
-  @@schema("auth")
+  @@schema("initial")
 }
 
 enum Status {
   BLOCKED
   FAILED
   SUCCESS
-  @@schema("auth")
+  @@schema("initial")
 }
 
 model Access {
@@ -61,7 +62,7 @@ model Access {
   role                          Role                            @relation(fields: [role_id], references: [id])
   @@unique([permission_id, role_id])
   @@map("access")
-  @@schema("auth")
+  @@schema("initial")
 }
 
 model Assignment {
@@ -78,7 +79,7 @@ model Assignment {
   user                          User                            @relation(fields: [user_id], references: [id])
   @@unique([module_id, program_id, role_id, user_id])
   @@map("assignment")
-  @@schema("auth")
+  @@schema("initial")
 }
 
 model Audit {
@@ -100,7 +101,7 @@ model Audit {
   @@index([status])
   @@index([user_id])
   @@map("audit")
-  @@schema("auth")
+  @@schema("initial")
 }
 
 model Permission {
@@ -112,7 +113,7 @@ model Permission {
   accesses                      Access[]   
   @@unique([action, resource])
   @@map("permission")
-  @@schema("auth")
+  @@schema("initial")
 }
 
 model Program {
@@ -123,7 +124,7 @@ model Program {
   assignments                   Assignment[]
   modules                       Module[]
   @@map("program")
-  @@schema("auth")
+  @@schema("initial")
 }
 
 model Module {
@@ -137,7 +138,7 @@ model Module {
   @@index([program_id])
   @@unique([name, program_id])
   @@map("module")
-  @@schema("auth")
+  @@schema("initial")
 }
 
 model Role {
@@ -149,7 +150,7 @@ model Role {
   accesses                      Access[]  
   assignments                   Assignment[]
   @@map("role")
-  @@schema("auth")
+  @@schema("initial")
 }
 
 model User {
@@ -167,7 +168,7 @@ model User {
   assignments                   Assignment[]
   audits                        Audit[]
   @@map("user")
-  @@schema("auth")
+  @@schema("initial")
 }
 
 // >> SCHEMA: PCA
@@ -235,6 +236,8 @@ model Directive {
   @@schema("pca")
 }
 
+
+
 // >> SCHEMA: PVL
 enum Route {
   A
@@ -243,6 +246,7 @@ enum Route {
   D
   @@schema("pvl")
 }
+
 
 model Committee {
   id                            String                          @id @default(uuid())
@@ -306,4 +310,38 @@ model Town {
   comittees                     Committee[]
   @@map("town")
   @@schema("pvl")
+}
+
+// >> SHEME:ULE
+model Enrolled{
+  id                            String                          @id @default(uuid())
+  dni                           String                          @unique
+  names                         String
+  lastname                      String
+  adress                        String?
+  program                       Social                          @relation(fields: [program_id], references: [id])
+  program_id                    String
+  created_at                    DateTime                        @default(now())
+  deleted_at                    DateTime?
+  @@map("enrolled")
+  @@schema("ule")
+}
+model Social{
+  id                            String                          @id @default(uuid())
+  name                          String                          @unique
+  created_at                    DateTime                        @default(now())
+  deleted_at                    DateTime?
+  enrolleds                     Enrolled[]
+  @@map("social")
+  @@schema("ule")
+}
+model Enumerator{
+  id                            String                          @id @default(uuid())
+  dni                           String                          @unique
+  name                          String
+  lastname                      String
+  created_at                    DateTime                        @default(now())
+  deleted_at                    DateTime?
+  @@map("enumerator")
+  @@schema("ule")
 }
