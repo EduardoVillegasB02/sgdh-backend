@@ -6,17 +6,18 @@ generator client {
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
-  schemas  = ["auth", "pvl","ule"]
+  directUrl = env("DIRECT_URL")
+  schemas  = ["initial", "pca", "pvl", "ule"]
 }
 
-// >> SCHEMA: AUTH
+// >> SCHEMA: initial
 enum Ability {
   CREATE
   READ
   UPDATE
   DELETE
   ASSIGN
-  @@schema("auth")
+  @@schema("initial")
 }
 
 enum Action {
@@ -28,12 +29,12 @@ enum Action {
   LOGOUT
   RESTORE
   UPDATE
-  @@schema("auth")
+  @@schema("initial")
 }
 
 enum Model {
-  AUTH
-  @@schema("auth")
+  initial
+  @@schema("initial")
 }
 
 enum Resource {
@@ -41,14 +42,14 @@ enum Resource {
   INCIDENCE
   USER
   REPORT
-  @@schema("auth")
+  @@schema("initial")
 }
 
 enum Status {
   BLOCKED
   FAILED
   SUCCESS
-  @@schema("auth")
+  @@schema("initial")
 }
 
 model Access {
@@ -61,7 +62,7 @@ model Access {
   role                          Role                            @relation(fields: [role_id], references: [id])
   @@unique([permission_id, role_id])
   @@map("access")
-  @@schema("auth")
+  @@schema("initial")
 }
 
 model Assignment {
@@ -78,7 +79,7 @@ model Assignment {
   user                          User                            @relation(fields: [user_id], references: [id])
   @@unique([module_id, program_id, role_id, user_id])
   @@map("assignment")
-  @@schema("auth")
+  @@schema("initial")
 }
 
 model Audit {
@@ -100,7 +101,7 @@ model Audit {
   @@index([status])
   @@index([user_id])
   @@map("audit")
-  @@schema("auth")
+  @@schema("initial")
 }
 
 model Permission {
@@ -112,7 +113,7 @@ model Permission {
   accesses                      Access[]   
   @@unique([action, resource])
   @@map("permission")
-  @@schema("auth")
+  @@schema("initial")
 }
 
 model Program {
@@ -123,7 +124,7 @@ model Program {
   assignments                   Assignment[]
   modules                       Module[]
   @@map("program")
-  @@schema("auth")
+  @@schema("initial")
 }
 
 model Module {
@@ -137,7 +138,7 @@ model Module {
   @@index([program_id])
   @@unique([name, program_id])
   @@map("module")
-  @@schema("auth")
+  @@schema("initial")
 }
 
 model Role {
@@ -149,7 +150,7 @@ model Role {
   accesses                      Access[]  
   assignments                   Assignment[]
   @@map("role")
-  @@schema("auth")
+  @@schema("initial")
 }
 
 model User {
@@ -167,7 +168,72 @@ model User {
   assignments                   Assignment[]
   audits                        Audit[]
   @@map("user")
-  @@schema("auth")
+  @@schema("initial")
+}
+
+// >> SCHEMA: PCA
+
+enum Modality {
+  EATER
+  CPOT
+  @@schema("pca")
+}
+
+enum Sex {
+  MALE
+  FEMALE
+  @@schema("pca")
+}
+
+model Center {
+  id                String      @id @default(uuid())
+  code              String      @unique
+  name              String
+  address           String?
+  members           Int         @default(0)
+  members_male      Int         @default(0)
+  members_female    Int         @default(0)
+  situation         String      
+  latitude          Float
+  longitude         Float
+  created_at        DateTime    @default(now())
+  updated_at        DateTime    @updatedAt
+  deleted_at        DateTime?
+  president_id      String
+  directive_id      String
+  president         President?  @relation(fields: [president_id], references: [id])
+  directive         Directive?  @relation(fields: [directive_id], references: [id])
+  @@map("center")
+  @@schema("pca")
+}
+
+model President {
+  id                String      @id @default(uuid())
+  name              String
+  lastname          String
+  dni               String?
+  sex               Sex
+  phone             String?
+  birthday          String?
+  created_at        DateTime    @default(now())
+  updated_at        DateTime    @updatedAt
+  deleted_at        DateTime?
+  centers           Center[]
+  @@map("president")
+  @@schema("pca")
+}
+
+model Directive {
+  id                String      @id @default(uuid())
+  resolution        String      
+  start_at          DateTime?
+  end_at            DateTime?
+  created_at        DateTime    @default(now())
+  updated_at        DateTime    @updatedAt
+  deleted_at        DateTime?
+  centers           Center[]
+  @@map("directive")
+  @@schema("pca")
 }
 
 

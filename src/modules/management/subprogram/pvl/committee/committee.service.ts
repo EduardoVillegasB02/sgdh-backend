@@ -52,6 +52,7 @@ export class CommitteeService {
       {
         where,
         orderBy: { code: 'asc' },
+        include: { coordinator: true, couple: true, town: true },
       },
       pagination,
     );
@@ -82,8 +83,8 @@ export class CommitteeService {
       ...(members && { members: Number(members) }),
       ...(handicappeds && { handicappeds: Number(handicappeds) }),
       ...(commune && { commune: Number(commune) }),
-      ...(latitude && { commune: Number(latitude) }),
-      ...(longitude && { commune: Number(longitude) }),
+      ...(latitude && { latitude: Number(latitude) }),
+      ...(longitude && { longitude: Number(longitude) }),
       updated_at: timezoneHelper(),
     };
     await this.prisma.committee.update({
