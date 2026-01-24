@@ -1,4 +1,4 @@
-import { IsEnum, IsOptional, IsString, IsUUID } from 'class-validator';
+import { IsOptional, IsString, IsUUID } from 'class-validator';
 
 export class CreateCenterDto {
   @IsString()
@@ -9,27 +9,32 @@ export class CreateCenterDto {
 
   @IsOptional()
   @IsString()
-  address: string;
+  address?: string;
+
+  @IsOptional()
+  @IsString()
+  members?: number;
+
+  @IsOptional()
+  @IsString()
+  members_male?: number;
+
+  @IsOptional()
+  @IsString()
+  members_female?: number;
 
   @IsString()
-  members?: string;
+  situation: string;
 
   @IsString()
-  members_male?: string;
+  latitude: number;
 
   @IsString()
-  members_female?: string;
-
-  @IsString()
-  latitude: string;
-
-  @IsString()
-  longitude: string;
+  longitude: number;
 
   @IsUUID()
   president_id: string;
 
   @IsUUID()
   directive_id: string;
-
 }
