@@ -1,5 +1,5 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
-import { Couple, Directive } from '@prisma/client';
+import { Directive } from '@prisma/client';
 import * as xlsx from 'xlsx';
 import { CreateDirectiveDto, UpdateDirectiveDto } from './dto';
 import { PrismaService } from '../../../../../prisma/prisma.service';
@@ -9,7 +9,6 @@ import {
   fullTimeHelper,
 } from '../../../../../common/helpers';
 import { SearchDto } from '../../../../../common/dto';
-import { start } from 'repl';
 
 @Injectable()
 export class DirectiveService {

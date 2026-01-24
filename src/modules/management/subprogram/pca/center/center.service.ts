@@ -70,7 +70,8 @@ export class CenterService {
             ...(members && { members: Number(members) }),
             ...(members_male && { members_male: Number(members_male)}),
             ...(members_female && {members_female: Number(members_female)}),
-            ...(latitude && {}),                                                     /* revisar */
+            ...(latitude && {latitude : Number (latitude)}),
+            ...(longitude && {longitude : Number (longitude)}),                                                     /* revisar */
             update_at: timezoneHelper(),
         };
         await this.prisma.center.update({
