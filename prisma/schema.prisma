@@ -6,7 +6,7 @@ generator client {
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
-  directUrl = env("DIRECT_URL")
+  //directUrl = env("DIRECT_URL")
   schemas  = ["initial", "pca", "pvl", "ule"]
 }
 
@@ -236,8 +236,6 @@ model Directive {
   @@schema("pca")
 }
 
-
-
 // >> SCHEMA: PVL
 enum Route {
   A
@@ -246,7 +244,6 @@ enum Route {
   D
   @@schema("pvl")
 }
-
 
 model Committee {
   id                            String                          @id @default(uuid())
@@ -259,7 +256,7 @@ model Committee {
   beneficiaries_foreign         Int                             @default(0)
   members                       Int                             @default(0)
   handicappeds                  Int                             @default(0)
-  commune                       Int                             @default(0)
+  commune                       String?
   observation                   String?
   coordinator_id                String
   couple_id                     String
@@ -312,7 +309,7 @@ model Town {
   @@schema("pvl")
 }
 
-// >> SHEME:ULE
+// >> SHEME: ULE
 model Enrolled{
   id                            String                          @id @default(uuid())
   dni                           String                          @unique
@@ -335,6 +332,7 @@ model Social{
   @@map("social")
   @@schema("ule")
 }
+
 model Enumerator{
   id                            String                          @id @default(uuid())
   dni                           String                          @unique

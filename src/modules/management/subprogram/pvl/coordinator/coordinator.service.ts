@@ -106,9 +106,9 @@ export class CoordinatorService {
       where: { id },
     });
     if (!coordinator)
-      throw new BadRequestException('Centro de acoplo no encontrado');
+      throw new BadRequestException('Coordinador no encontrado');
     if (coordinator.deleted_at && !toogle)
-      throw new BadRequestException('Centro de acoplo eliminado');
+      throw new BadRequestException('Coordinador eliminado');
     return coordinator;
   }
 }

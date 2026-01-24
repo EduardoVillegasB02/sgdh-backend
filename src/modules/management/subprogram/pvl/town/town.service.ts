@@ -97,9 +97,9 @@ export class TownService {
     const town = await this.prisma.town.findUnique({
       where: { id },
     });
-    if (!town) throw new BadRequestException('Centro de acoplo no encontrado');
+    if (!town) throw new BadRequestException('Pueblo no encontrado');
     if (town.deleted_at && !toogle)
-      throw new BadRequestException('Centro de acoplo eliminado');
+      throw new BadRequestException('Pueblo eliminado');
     return town;
   }
 }
