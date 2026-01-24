@@ -6,7 +6,7 @@ generator client {
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
-  directUrl = env("DIRECT_URL")
+  //directUrl = env("DIRECT_URL")
   schemas  = ["initial", "pca", "pvl", "ule"]
 }
 
@@ -313,14 +313,48 @@ model Town {
 }
 
 // >> SHEME:ULE
+
+enum Ecoclas {
+  P
+  PE
+  NP
+  PU
+  @@map("ecoclas")
+  @@schema("ule")
+}
+enum Tip {
+  FSU
+  S100
+  @@schema("ule")
+}
+model Enrollment{
+  id                            String                          @id @default(uuid())
+  code                          String                          @unique
+  enrolled_id                   String                          
+  program_id                    String
+  enumerator_id                 String?
+  fsu_id                        String                          
+  s100_id                       String      
+  enrolled                      Enrolled                       @relation(fields: [enrolled_id], references: [id])
+  ecoclas                       Ecoclas                         
+  program                       Social                          @relation(fields: [program_id], references: [id])
+  enumerator                    Enumerator?                     @relation(fields: [enumerator_id], references: [id])
+  s100                          S100                           @relation(fields: [s100_id], references: [id])
+  tip                           Tip
+  fsu                           Fsu?                            @relation(fields: [], references: [id])
+  created_at                    DateTime                        @default(now())
+  deleted_at                    DateTime?
+  @@map("enrollment")
+  @@schema("ule")
+}
 model Enrolled{
   id                            String                          @id @default(uuid())
   dni                           String                          @unique
   names                         String
   lastname                      String
   adress                        String?
-  program                       Social                          @relation(fields: [program_id], references: [id])
-  program_id                    String
+  members                       Int                             @default(0)
+  enrollments                   Enrollment[]
   created_at                    DateTime                        @default(now())
   deleted_at                    DateTime?
   @@map("enrolled")
@@ -340,8 +374,25 @@ model Enumerator{
   dni                           String                          @unique
   name                          String
   lastname                      String
+  enrollments                   Enrollment[]
   created_at                    DateTime                        @default(now())
   deleted_at                    DateTime?
   @@map("enumerator")
   @@schema("ule")
+}
+
+
+model Fsu{
+id                            String                          @id @default(uuid())
+code                          String                          @unique
+enrollments                   Enrollment[]
+@@map("fsu")
+@@schema("ule")
+}
+model S100{
+id                            String                          @id @default(uuid())
+code                          String                          @unique
+enrollments                   Enrollment[]
+@@map("s100")
+@@schema("ule")
 }
