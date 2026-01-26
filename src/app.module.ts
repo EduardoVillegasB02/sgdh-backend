@@ -16,6 +16,9 @@ import { ComitteeModule } from './modules/management/subprogram/pvl/committee/co
 import { CoupleModule } from './modules/management/subprogram/pvl/couple/couple.module';
 import { TownModule } from './modules/management/subprogram/pvl/town/town.module';
 import { ConfigModule } from '@nestjs/config';
+import { CenterModule } from './modules/management/subprogram/pca/center/center.module';
+import { DirectiveModule } from './modules/management/subprogram/pca/directive/directive.module';
+import { PresidentModule } from './modules/management/subprogram/pca/president/president.module';
 
 @Module({
   imports: [
@@ -36,6 +39,9 @@ import { ConfigModule } from '@nestjs/config';
     ComitteeModule,
     CoupleModule,
     TownModule,
+    CenterModule,
+    DirectiveModule,
+    PresidentModule
   ],
   controllers: [AppController],
   providers: [AppService],

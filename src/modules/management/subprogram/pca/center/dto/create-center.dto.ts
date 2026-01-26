@@ -1,5 +1,4 @@
-import { Route } from '@prisma/client';
-import { IsEnum, IsOptional, IsString, IsUUID } from 'class-validator';
+import { IsOptional, IsString, IsUUID } from 'class-validator';
 
 export class CreateCenterDto {
   @IsString()
@@ -10,33 +9,32 @@ export class CreateCenterDto {
 
   @IsOptional()
   @IsString()
-  address: string;
-
-  @IsString()
-  latitude: string;
-
-  @IsString()
-  longitude: string;
+  address?: string;
 
   @IsOptional()
   @IsString()
-  members_male?: string;
+  members?: number;
 
   @IsOptional()
   @IsString()
-  members_female?: string;
-
-  @IsString()
-  sex: string;
+  members_male?: number;
 
   @IsOptional()
   @IsString()
-  handicappeds?: string;
+  members_female?: number;
+
+  @IsString()
+  situation: string;
+
+  @IsString()
+  latitude: number;
+
+  @IsString()
+  longitude: number;
 
   @IsUUID()
   president_id: string;
 
   @IsUUID()
   directive_id: string;
-
 }

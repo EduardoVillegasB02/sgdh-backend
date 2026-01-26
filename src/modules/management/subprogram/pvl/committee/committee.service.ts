@@ -21,7 +21,6 @@ export class CommitteeService {
       beneficiaries_foreign,
       members,
       handicappeds,
-      commune,
       ...res
     } = dto;
     const data: any = {
@@ -32,7 +31,6 @@ export class CommitteeService {
       }),
       ...(members && { members: Number(members) }),
       ...(handicappeds && { handicappeds: Number(handicappeds) }),
-      ...(commune && { commune: Number(commune) }),
       latitude: Number(latitude),
       longitude: Number(longitude),
       created_at: timezoneHelper(),
@@ -83,8 +81,8 @@ export class CommitteeService {
       ...(members && { members: Number(members) }),
       ...(handicappeds && { handicappeds: Number(handicappeds) }),
       ...(commune && { commune: Number(commune) }),
-      ...(latitude && { commune: Number(latitude) }),
-      ...(longitude && { commune: Number(longitude) }),
+      ...(latitude && { latitude: Number(latitude) }),
+      ...(longitude && { longitude: Number(longitude) }),
       updated_at: timezoneHelper(),
     };
     await this.prisma.committee.update({
@@ -167,9 +165,9 @@ export class CommitteeService {
       where: { id },
     });
     if (!committee)
-      throw new BadRequestException('Centro de acoplo no encontrado');
+      throw new BadRequestException('Comité no encontrado');
     if (committee.deleted_at && !toogle)
-      throw new BadRequestException('Centro de acoplo eliminado');
+      throw new BadRequestException('Comité eliminado');
     return committee;
   }
 }
