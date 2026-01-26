@@ -1,5 +1,5 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
-import { Center } from '@prisma/client';
+import { Center, Modality } from '@prisma/client';
 import * as xlsx from 'xlsx';
 import { CreateCenterDto, UpdateCenterDto } from './dto';
 import { PrismaService } from '../../../../../prisma/prisma.service';
@@ -38,7 +38,7 @@ export class CenterService {
 
     async findAll(dto: SearchDto): Promise<any> {
         const { search, ...pagination } = dto;
-        const where: any = { delete_at: null};
+        const where: any = { deleted_at: null };
         if (search)
             where.OR = [{name: { contains: search, mode: 'insensitive'}}]
         return paginationHelper(
@@ -46,6 +46,7 @@ export class CenterService {
             {
                 where,
                 orderBy: { code: 'asc' },
+                include: { directive: true, president: true }
             },
             pagination,
         );
@@ -106,10 +107,22 @@ export class CenterService {
         const sheetName = workbook.SheetNames[0];
         const rows = xlsx.utils.sheet_to_json(workbook.Sheets[sheetName]);
         const data = rows.map((row: any) => {
+
+            let lat = row.longitude?.toString() ?? null;
+            let lon = row.latitude?.toString() ?? null;
+
+
+            if (lat) {
+                lat = lat.replace(/,/g, "").replace(/^(-\d{2})(\d+)$/, "$1.$2");
+            }
+
+            if (lon) {
+                lon = lon.replace(/,/g, "").replace(/^(-\d{2})(\d+)$/, "$1.$2");
+            }
             return {
-                modality: String(row.modality),
+                modality: row.modality === 'Comedores' ? Modality.CPOT: Modality.EATER,
                 code: String(row.code),
-                name: row.name,
+                name: String(row.name),
                 address: row.address ?? null,
                 members: row.members ? Number(row.members) : 0,
                 members_male: row.members_male ? Number(row.members_male) :0,
@@ -117,23 +130,21 @@ export class CenterService {
                 created_at: timezoneHelper(),
                 updated_at: timezoneHelper(),
                 deleted_at: row.state === 'Activo' ? null : timezoneHelper(),
-                situation: String(row.situation),
-                latitude: Number(row.latitude),
-                longitude: Number(row.longitude),
-                president: row.president_id,
-                directive: row.directive_id
+                situation: row.situation ?? null,
+                latitude: lat ? Number(lat) : null,
+                longitude: lon ? Number(lon) : null,
+                president: row.dni,
+                directive: row.resolution
             }
         })
         const result: any = [];
         for (const d of data) {
             const presidentd = await this.prisma.president.findFirst({ where: { dni: d.president }});
             const directived = await this.prisma.directive.findFirst({ where: { resolution: d.directive}})
-            if (!presidentd || !directived)
-                throw new BadRequestException('No hay ID');
             const { president, directive, ...res } = d;
             result.push({
-                president_id: presidentd.id,
-                directive_id: directived.id,
+                president_id: presidentd?.id ?? null,
+                directive_id: directived?.id ?? null,
                 ...res,
             })
         }

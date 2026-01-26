@@ -187,13 +187,14 @@ enum Sex {
 
 model Center {
   id                String      @id @default(uuid())
+  modality          Modality
   code              String      @unique
   name              String
   address           String?
   members           Int         @default(0)
   members_male      Int         @default(0)
   members_female    Int         @default(0)
-  situation         String      
+  situation         String?      
   latitude          Float
   longitude         Float
   created_at        DateTime    @default(now())
