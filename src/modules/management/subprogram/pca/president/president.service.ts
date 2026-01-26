@@ -9,7 +9,6 @@ import {
 } from '../../../../../common/helpers';
 import { SearchDto } from '../../../../../common/dto';
 
-
 @Injectable()
 export class PresidentService {
   constructor(private readonly prisma: PrismaService) {}
@@ -24,43 +23,43 @@ export class PresidentService {
     });
     return await this.getPresidentById(president.id);
   }
-  
+
   async findAll(dto: SearchDto): Promise<any> {
-    const {search, ...pagination } = dto;
-    const where: any = { deleted_at: null};
+    const { search, ...pagination } = dto;
+    const where: any = { deleted_at: null };
     if (search)
-        where.OR = [
-    { name: { contains: search, mode: 'insensitive' } },
-    { lastname: { contains: search, mode: 'insensitive' } },
-    { dni: { contains: search, mode: 'insensitive' } },
-    ];
+      where.OR = [
+        { name: { contains: search, mode: 'insensitive' } },
+        { lastname: { contains: search, mode: 'insensitive' } },
+        { dni: { contains: search, mode: 'insensitive' } },
+      ];
     return paginationHelper(
-        this.prisma.president,
-        {
-            where,
-            orderBy: { lastname: 'asc' },
-        },
-        pagination,
+      this.prisma.president,
+      {
+        where,
+        orderBy: { lastname: 'asc' },
+      },
+      pagination,
     );
   }
 
-    async findOne(id: string): Promise<President> {
-      return await this.getPresidentById(id);
-    }
+  async findOne(id: string): Promise<President> {
+    return await this.getPresidentById(id);
+  }
 
-    async update(id: string, dto: UpdatePresidentDto): Promise<President> {
-        await this.getPresidentById(id);
-        await this.prisma.president.update({
-          data: {
-            ...dto,
-            updated_at: timezoneHelper(),
-          },
-          where: { id },
-        });
-        return await this.getPresidentById(id);
-    }
+  async update(id: string, dto: UpdatePresidentDto): Promise<President> {
+    await this.getPresidentById(id);
+    await this.prisma.president.update({
+      data: {
+        ...dto,
+        updated_at: timezoneHelper(),
+      },
+      where: { id },
+    });
+    return await this.getPresidentById(id);
+  }
 
-    async toggleDelete(id: string): Promise<any> {
+  async toggleDelete(id: string): Promise<any> {
     const president = await this.getPresidentById(id, true);
     const inactive = president.deleted_at;
     const deleted_at = inactive ? null : timezoneHelper();
@@ -78,41 +77,40 @@ export class PresidentService {
   }
 
   async upload(file: Express.Multer.File) {
-      const count = await this.prisma.president.count();
-      if (count > 0)
-        throw new BadRequestException('Solo se puede realizar una vez');
-      const workbook = xlsx.read(file.buffer, { type: 'buffer' });
-      const sheetName = workbook.SheetNames[0];
-      const rows = xlsx.utils.sheet_to_json(workbook.Sheets[sheetName]);
-      const data = rows.map((row: any) => {
-        return {
-          name: String(row.name),
-          lastname: String(row.lastname) ?? String(row.name),
-          dni: row.dni ? String(row.dni) : null,
-          sex: row.sex === 'Masculino' ? Sex.MALE : Sex.FEMALE,
-          phone: row.phone ? String(row.phone) : null,
-          birthday: row.birthday ? String(row.birthday) : null,
-          created_at: timezoneHelper(),
-          updated_at: timezoneHelper(),
-        };
-      });
+    const count = await this.prisma.president.count();
+    if (count > 0)
+      throw new BadRequestException('Solo se puede realizar una vez');
+    const workbook = xlsx.read(file.buffer, { type: 'buffer' });
+    const sheetName = workbook.SheetNames[0];
+    const rows = xlsx.utils.sheet_to_json(workbook.Sheets[sheetName]);
+    const data = rows.map((row: any) => {
+      return {
+        name: String(row.name),
+        lastname: String(row.lastname) ?? String(row.name),
+        dni: row.dni ? String(row.dni) : null,
+        sex: row.sex === 'Masculino' ? Sex.MALE : Sex.FEMALE,
+        phone: row.phone ? String(row.phone) : null,
+        birthday: row.birthday ? String(row.birthday) : null,
+        created_at: timezoneHelper(),
+        updated_at: timezoneHelper(),
+      };
+    });
 
-      await this.prisma.president.createMany({ data });
-      return { success: true };
-    }
-  
-    private async getPresidentById(
-      id: string,
-      toogle: boolean = false,
-    ): Promise<any> {
-      const president = await this.prisma.president.findUnique({
-        where: { id },
-      });
-      if (!president)
-        throw new BadRequestException('Centro de acoplo no encontrado');
-      if (president.deleted_at && !toogle)
-        throw new BadRequestException('Centro de acoplo eliminado');
-      return president;
-    }
+    await this.prisma.president.createMany({ data });
+    return { success: true };
+  }
 
+  private async getPresidentById(
+    id: string,
+    toogle: boolean = false,
+  ): Promise<any> {
+    const president = await this.prisma.president.findUnique({
+      where: { id },
+    });
+    if (!president)
+      throw new BadRequestException('Centro de acoplo no encontrado');
+    if (president.deleted_at && !toogle)
+      throw new BadRequestException('Centro de acoplo eliminado');
+    return president;
+  }
 }

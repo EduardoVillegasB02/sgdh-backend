@@ -41,7 +41,7 @@ import { PresidentModule } from './modules/management/subprogram/pca/president/p
     TownModule,
     CenterModule,
     DirectiveModule,
-    PresidentModule
+    PresidentModule,
   ],
   controllers: [AppController],
   providers: [AppService],

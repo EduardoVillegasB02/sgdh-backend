@@ -19,40 +19,40 @@ import { SearchDto } from '../../../../../common/dto';
 
 @Controller('pca/president')
 export class PresidentController {
-    constructor(private readonly presidentService: PresidentService) {}
+  constructor(private readonly presidentService: PresidentService) {}
 
-    @Get()
-    findAll(@Query() dto: SearchDto) {
-        return this.presidentService.findAll(dto);
-    }
+  @Get()
+  findAll(@Query() dto: SearchDto) {
+    return this.presidentService.findAll(dto);
+  }
 
-    @Get(':id')
-    findOne(@Param('id', ParseUUIDPipe) id: string) {
-        return this.presidentService.findOne(id);
-    }
+  @Get(':id')
+  findOne(@Param('id', ParseUUIDPipe) id: string) {
+    return this.presidentService.findOne(id);
+  }
 
-    @Post()
-    create(@Body() dto: CreatePresidentDto) {
-        return this.presidentService.create(dto);
-    }
+  @Post()
+  create(@Body() dto: CreatePresidentDto) {
+    return this.presidentService.create(dto);
+  }
 
-    @Patch(':id')
-    update(
-        @Param('id', ParseUUIDPipe) id: string,
-        @Body() dto: UpdatePresidentDto,
-    ) {
-        return this.presidentService.update(id, dto);
-    }
+  @Patch(':id')
+  update(
+    @Param('id', ParseUUIDPipe) id: string,
+    @Body() dto: UpdatePresidentDto,
+  ) {
+    return this.presidentService.update(id, dto);
+  }
 
-    @Delete(':id')
-    toggleDelete(@Param('id', ParseUUIDPipe) id: string) {
-        return this.presidentService.toggleDelete(id);
-    }
+  @Delete(':id')
+  toggleDelete(@Param('id', ParseUUIDPipe) id: string) {
+    return this.presidentService.toggleDelete(id);
+  }
 
-    @Post('upload')
-    @SuccessMessage('Creacion masiva exitosa')
-    @UseInterceptors(FileInterceptor('file'))
-    upload(@UploadedFile() file: Express.Multer.File) {
-        return this.presidentService.upload(file);
-    }
+  @Post('upload')
+  @SuccessMessage('Creacion masiva exitosa')
+  @UseInterceptors(FileInterceptor('file'))
+  upload(@UploadedFile() file: Express.Multer.File) {
+    return this.presidentService.upload(file);
+  }
 }
