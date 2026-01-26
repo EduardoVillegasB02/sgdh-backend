@@ -37,7 +37,10 @@ export class DirectiveController {
   }
 
   @Patch(':id')
-  update(@Param('id', ParseUUIDPipe) id: string, @Body() dto: UpdateDirectiveDto) {
+  update(
+    @Param('id', ParseUUIDPipe) id: string,
+    @Body() dto: UpdateDirectiveDto,
+  ) {
     return this.directiveService.update(id, dto);
   }
 

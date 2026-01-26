@@ -140,9 +140,15 @@ export class CommitteeService {
     });
     const result: any = [];
     for (const d of data) {
-      const coordinatord = await this.prisma.coordinator.findFirst({ where: { dni: d.coordinator } });
-      const coupled = await this.prisma.couple.findFirst({ where: { name: d.couple } });
-      const townd = await this.prisma.town.findFirst({ where: { name: d.town } });
+      const coordinatord = await this.prisma.coordinator.findFirst({
+        where: { dni: d.coordinator },
+      });
+      const coupled = await this.prisma.couple.findFirst({
+        where: { name: d.couple },
+      });
+      const townd = await this.prisma.town.findFirst({
+        where: { name: d.town },
+      });
       if (!coordinatord || !coupled || !townd)
         throw new BadRequestException('No hay ID');
       const { coordinator, couple, town, ...res } = d;
@@ -151,7 +157,7 @@ export class CommitteeService {
         couple_id: coupled.id,
         town_id: townd.id,
         ...res,
-      })
+      });
     }
     await this.prisma.committee.createMany({ data: result });
     return { success: true };
@@ -164,8 +170,7 @@ export class CommitteeService {
     const committee = await this.prisma.committee.findUnique({
       where: { id },
     });
-    if (!committee)
-      throw new BadRequestException('Comité no encontrado');
+    if (!committee) throw new BadRequestException('Comité no encontrado');
     if (committee.deleted_at && !toogle)
       throw new BadRequestException('Comité eliminado');
     return committee;
