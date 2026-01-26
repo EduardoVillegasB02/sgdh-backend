@@ -86,8 +86,8 @@ export class PresidentService {
       const rows = xlsx.utils.sheet_to_json(workbook.Sheets[sheetName]);
       const data = rows.map((row: any) => {
         return {
-          name: row.name,
-          lastname: row.lastname ?? row.name,
+          name: String(row.name),
+          lastname: String(row.lastname) ?? String(row.name),
           dni: row.dni ? String(row.dni) : null,
           sex: row.sex === 'Masculino' ? Sex.MALE : Sex.FEMALE,
           phone: row.phone ? String(row.phone) : null,

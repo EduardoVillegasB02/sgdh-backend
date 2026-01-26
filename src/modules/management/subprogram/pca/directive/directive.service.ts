@@ -15,15 +15,21 @@ export class DirectiveService {
   constructor(private readonly prisma: PrismaService) {}
 
   async create(dto: CreateDirectiveDto): Promise<Directive> {
-    const Directive = await this.prisma.directive.create({
-      data: {
-        ...dto,
-        created_at: timezoneHelper(),
-        updated_at: timezoneHelper(),
-      },
-    });
-    return await this.getDirectiveById(Directive.id);
-  }
+  const { start_At, end_At, ...rest } = dto;
+
+  const Directive = await this.prisma.directive.create({
+    data: {
+      ...rest,
+      start_at: new Date(start_At),
+      end_at: new Date(end_At),
+      created_at: timezoneHelper(),
+      updated_at: timezoneHelper(),
+    },
+  });
+
+  return await this.getDirectiveById(Directive.id);
+}
+
 
   async findAll(dto: SearchDto): Promise<any> {
     const { search, ...pagination } = dto;
@@ -33,7 +39,7 @@ export class DirectiveService {
       this.prisma.directive,
       {
         where,
-        orderBy: { name: 'asc' },
+        orderBy: { resolution: 'asc' },
       },
       pagination,
     );
@@ -45,13 +51,16 @@ export class DirectiveService {
 
     async update(id: string, dto: UpdateDirectiveDto): Promise<Directive> {
       await this.getDirectiveById(id);
-      await this.prisma.directive.update({
-        data: {
-          ...dto,
-          updated_at: timezoneHelper(),
-        },
-        where: { id },
-      });
+      const { start_At, end_At, ...rest } = dto;
+        await this.prisma.directive.update({
+          data: {
+            ...rest,
+            ...(start_At && { start_at: new Date(start_At) }),
+            ...(end_At && { end_at: new Date(end_At) }),
+            updated_at: timezoneHelper(),
+          },
+          where: { id },
+        });
       return await this.getDirectiveById(id);
     }
   
@@ -72,7 +81,7 @@ export class DirectiveService {
       };
     }
 
-    async upload(file: Express.Multer.File) {
+      async upload(file: Express.Multer.File) {
         const count = await this.prisma.directive.count();
         if (count > 0)
           throw new BadRequestException('Solo se puede realizar una vez');
@@ -81,12 +90,12 @@ export class DirectiveService {
         const rows = xlsx.utils.sheet_to_json(workbook.Sheets[sheetName]);
         const data = rows.map((row: any) => {
           return {
-            resolution: row.resolution,
-            start_At: fullTimeHelper(row.start_At, 'start'),
-            end_At: fullTimeHelper(row.end_At, 'end'),
-            created_at: timezoneHelper(),
-            updated_at: timezoneHelper(),
-          };
+              resolution: row.resolution,
+              start_at: fullTimeHelper(row.start_At, 'start'),
+              end_at: fullTimeHelper(row.end_At, 'end'),
+              created_at: timezoneHelper(),
+              updated_at: timezoneHelper(),
+            };
         });
         await this.prisma.directive.createMany({ data });
         return { success: true };
@@ -100,9 +109,9 @@ export class DirectiveService {
           where: { id },
         });
         if (!Directive)
-          throw new BadRequestException('Centro de acoplo no encontrado');
+          throw new BadRequestException('Directiva no encontrado');
         if (Directive.deleted_at && !toogle)
-          throw new BadRequestException('Centro de acoplo eliminado');
+          throw new BadRequestException('Directiva eliminada');
         return Directive;
       }
     }

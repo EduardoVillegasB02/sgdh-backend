@@ -187,13 +187,14 @@ enum Sex {
 
 model Center {
   id                String      @id @default(uuid())
+  modality          Modality
   code              String      @unique
   name              String
   address           String?
   members           Int         @default(0)
   members_male      Int         @default(0)
   members_female    Int         @default(0)
-  situation         String      
+  situation         String?      
   latitude          Float
   longitude         Float
   created_at        DateTime    @default(now())
@@ -236,8 +237,6 @@ model Directive {
   @@schema("pca")
 }
 
-
-
 // >> SCHEMA: PVL
 enum Route {
   A
@@ -246,7 +245,6 @@ enum Route {
   D
   @@schema("pvl")
 }
-
 
 model Committee {
   id                            String                          @id @default(uuid())
@@ -259,7 +257,7 @@ model Committee {
   beneficiaries_foreign         Int                             @default(0)
   members                       Int                             @default(0)
   handicappeds                  Int                             @default(0)
-  commune                       Int                             @default(0)
+  commune                       String?
   observation                   String?
   coordinator_id                String
   couple_id                     String
@@ -327,6 +325,7 @@ enum Tip {
   S100
   @@schema("ule")
 }
+
 model Enrollment{
   id                            String                          @id @default(uuid())
   code                          String                          @unique
@@ -347,6 +346,7 @@ model Enrollment{
   @@map("enrollment")
   @@schema("ule")
 }
+
 model Enrolled{
   id                            String                          @id @default(uuid())
   dni                           String                          @unique
@@ -360,6 +360,7 @@ model Enrolled{
   @@map("enrolled")
   @@schema("ule")
 }
+
 model Social{
   id                            String                          @id @default(uuid())
   name                          String                          @unique
@@ -369,6 +370,7 @@ model Social{
   @@map("social")
   @@schema("ule")
 }
+
 model Enumerator{
   id                            String                          @id @default(uuid())
   dni                           String                          @unique
@@ -380,7 +382,6 @@ model Enumerator{
   @@map("enumerator")
   @@schema("ule")
 }
-
 
 model Fsu{
 id                            String                          @id @default(uuid())
