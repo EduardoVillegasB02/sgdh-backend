@@ -1,13 +1,17 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { Committee } from '@prisma/client';
 import * as xlsx from 'xlsx';
-import { CreateCommitteeDto, UpdateCommitteeDto } from './dto';
+import {
+  CreateCommitteeDto,
+  FilterCommitteeDto,
+  UpdateCommitteeDto,
+} from './dto';
+import { filterCommitte } from './helpers';
 import { PrismaService } from '../../../../../prisma/prisma.service';
 import {
   paginationHelper,
   timezoneHelper,
 } from '../../../../../common/helpers';
-import { SearchDto } from '../../../../../common/dto';
 
 @Injectable()
 export class CommitteeService {
@@ -40,11 +44,8 @@ export class CommitteeService {
     return this.getCommitteeById(committee.id);
   }
 
-  async findAll(dto: SearchDto): Promise<any> {
-    const { search, ...pagination } = dto;
-    const where: any = { deleted_at: null };
-    if (search)
-      where.OR = [{ name: { contains: search, mode: 'insensitive' } }];
+  async findAll(dto: FilterCommitteeDto): Promise<any> {
+    const { where, pagination } = filterCommitte(dto);
     return paginationHelper(
       this.prisma.committee,
       {
