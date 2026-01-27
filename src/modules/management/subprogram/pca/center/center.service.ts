@@ -37,8 +37,9 @@ export class CenterService {
   }
 
   async findAll(dto: FilterCenterDto): Promise<any> {
-    const { search, ...pagination } = dto;
+    const { modality, search, ...pagination } = dto;
     const where: any = { deleted_at: null };
+    if (modality) where.modality = modality;
     if (search)
       where.OR = [{ name: { contains: search, mode: 'insensitive' } }];
     return paginationHelper(
