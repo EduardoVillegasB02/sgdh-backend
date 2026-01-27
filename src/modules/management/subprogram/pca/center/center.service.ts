@@ -8,7 +8,6 @@ import {
   timezoneHelper,
 } from '../../../../../common/helpers';
 import { SearchDto } from '../../../../../common/dto';
-import { prependListener } from 'process';
 
 @Injectable()
 export class CenterService {

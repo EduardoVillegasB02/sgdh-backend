@@ -1,4 +1,5 @@
-import { IsOptional, IsString, IsUUID } from 'class-validator';
+import { Modality } from '@prisma/client';
+import { IsEnum, IsOptional, IsString, IsUUID } from 'class-validator';
 
 export class CreateCenterDto {
   @IsString()
@@ -37,4 +38,7 @@ export class CreateCenterDto {
 
   @IsUUID()
   directive_id: string;
+
+  @IsEnum(Modality)
+  modality: Modality;
 }

@@ -15,14 +15,14 @@ import { FileInterceptor } from '@nestjs/platform-express';
 import { CenterService } from './center.service';
 import { CreateCenterDto, UpdateCenterDto } from './dto';
 import { SuccessMessage } from '../../../../../common/decorators';
-import { SearchDto } from '../../../../../common/dto';
+import { FilterCenterDto } from './dto/filter-center.dto';
 
 @Controller('pca/center')
 export class CenterController {
   constructor(private readonly centerService: CenterService) {}
 
   @Get()
-  findAll(@Query() dto: SearchDto) {
+  findAll(@Query() dto: FilterCenterDto) {
     return this.centerService.findAll(dto);
   }
 
