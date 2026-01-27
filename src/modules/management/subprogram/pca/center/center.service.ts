@@ -7,7 +7,7 @@ import {
   paginationHelper,
   timezoneHelper,
 } from '../../../../../common/helpers';
-import { SearchDto } from '../../../../../common/dto';
+import { FilterCenterDto } from './dto/filter-center.dto';
 
 @Injectable()
 export class CenterService {
@@ -36,7 +36,7 @@ export class CenterService {
     return this.getCenterById(center.id);
   }
 
-  async findAll(dto: SearchDto): Promise<any> {
+  async findAll(dto: FilterCenterDto): Promise<any> {
     const { search, ...pagination } = dto;
     const where: any = { deleted_at: null };
     if (search)
