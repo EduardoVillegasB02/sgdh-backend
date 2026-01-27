@@ -278,7 +278,7 @@ model Coordinator {
   lastname                      String
   dni                           String?
   phone                         String?
-  birthday                      String?
+  birthday                      DateTime?
   created_at                    DateTime                        @default(now())
   updated_at                    DateTime                        @updatedAt
   deleted_at                    DateTime?

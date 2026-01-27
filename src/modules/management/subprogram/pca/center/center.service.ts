@@ -113,7 +113,9 @@ export class CenterService {
       if (lat) lat = lat.replace(/,/g, '').replace(/^(-\d{2})(\d+)$/, '$1.$2');
       if (lon) lon = lon.replace(/,/g, '').replace(/^(-\d{2})(\d+)$/, '$1.$2');
       if (!lat || !lon)
-        throw new BadRequestException('No existe longitud ni latitud asociada al centro');
+        throw new BadRequestException(
+          'No existe longitud ni latitud asociada al centro',
+        );
       return {
         modality: row.modality === 'Comedores' ? Modality.CPOT : Modality.EATER,
         code: String(row.code),

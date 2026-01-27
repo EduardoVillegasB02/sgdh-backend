@@ -29,10 +29,15 @@ export function createDate(serial: number): Date {
   const msPerDay = 24 * 60 * 60 * 1000;
   const utcMs = (serial - epoch) * msPerDay;
   const date = new Date(utcMs);
-  return new Date(Date.UTC(
-    date.getUTCFullYear(),
-    date.getUTCMonth(),
-    date.getUTCDate(),
-    0, 0, 0, 0
-  ));
+  return new Date(
+    Date.UTC(
+      date.getUTCFullYear(),
+      date.getUTCMonth(),
+      date.getUTCDate(),
+      0,
+      0,
+      0,
+      0,
+    ),
+  );
 }

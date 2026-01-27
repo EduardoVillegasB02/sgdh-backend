@@ -13,16 +13,19 @@ import {
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { CommitteeService } from './committee.service';
-import { CreateCommitteeDto, UpdateCommitteeDto } from './dto';
+import {
+  CreateCommitteeDto,
+  FilterCommitteeDto,
+  UpdateCommitteeDto,
+} from './dto';
 import { SuccessMessage } from '../../../../../common/decorators';
-import { SearchDto } from '../../../../../common/dto';
 
 @Controller('pvl/committee')
 export class CommitteeController {
   constructor(private readonly committeeService: CommitteeService) {}
 
   @Get()
-  findAll(@Query() dto: SearchDto) {
+  findAll(@Query() dto: FilterCommitteeDto) {
     return this.committeeService.findAll(dto);
   }
 
