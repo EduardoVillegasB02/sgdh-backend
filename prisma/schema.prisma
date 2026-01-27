@@ -6,7 +6,7 @@ generator client {
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
-  //directUrl = env("DIRECT_URL")
+  directUrl = env("DIRECT_URL")
   schemas  = ["initial", "pca", "pvl", "ule"]
 }
 
@@ -172,72 +172,69 @@ model User {
 }
 
 // >> SCHEMA: PCA
-
 enum Modality {
-  EATER
   CPOT
+  EATER
   @@schema("pca")
 }
 
 enum Sex {
-  MALE
   FEMALE
+  MALE
   @@schema("pca")
 }
 
 model Center {
-  id                String      @id @default(uuid())
-  modality          Modality
-  code              String      @unique
-  name              String
-  address           String?
-  members           Int         @default(0)
-  members_male      Int         @default(0)
-  members_female    Int         @default(0)
-  situation         String?      
-  latitude          Float
-  longitude         Float
-  created_at        DateTime    @default(now())
-  updated_at        DateTime    @updatedAt
-  deleted_at        DateTime?
-  president_id      String
-  directive_id      String
-  president         President?  @relation(fields: [president_id], references: [id])
-  directive         Directive?  @relation(fields: [directive_id], references: [id])
+  id                            String                          @id @default(uuid())
+  code                          String                          @unique
+  name                          String
+  address                       String?
+  members                       Int                             @default(0)
+  members_male                  Int                             @default(0)
+  members_female                Int                             @default(0)
+  situation                     String?      
+  latitude                      Float
+  longitude                     Float
+  president_id                  String?
+  directive_id                  String?
+  created_at                    DateTime                        @default(now())
+  updated_at                    DateTime                        @updatedAt
+  deleted_at                    DateTime?
+  modality                      Modality
+  directive                     Directive?                      @relation(fields: [directive_id], references: [id])
+  president                     President?                      @relation(fields: [president_id], references: [id])
   @@map("center")
   @@schema("pca")
 }
 
 model President {
-  id                String      @id @default(uuid())
-  name              String
-  lastname          String
-  dni               String?
-  sex               Sex
-  phone             String?
-  birthday          String?
-  created_at        DateTime    @default(now())
-  updated_at        DateTime    @updatedAt
-  deleted_at        DateTime?
-  centers           Center[]
+  id                            String                          @id @default(uuid())
+  name                          String
+  lastname                      String
+  dni                           String?
+  phone                         String?
+  birthday                      String?
+  created_at                    DateTime                        @default(now())
+  updated_at                    DateTime                        @updatedAt
+  deleted_at                    DateTime?
+  sex                           Sex
+  centers                       Center[]
   @@map("president")
   @@schema("pca")
 }
 
 model Directive {
-  id                String      @id @default(uuid())
-  resolution        String      
-  start_at          DateTime?
-  end_at            DateTime?
-  created_at        DateTime    @default(now())
-  updated_at        DateTime    @updatedAt
-  deleted_at        DateTime?
-  centers           Center[]
+  id                            String                          @id @default(uuid())
+  resolution                    String      
+  start_at                      DateTime?
+  end_at                        DateTime?
+  created_at                    DateTime                        @default(now())
+  updated_at                    DateTime                        @updatedAt
+  deleted_at                    DateTime?
+  centers                       Center[]
   @@map("directive")
   @@schema("pca")
 }
-
-
 
 // >> SCHEMA: PVL
 enum Route {
@@ -247,7 +244,6 @@ enum Route {
   D
   @@schema("pvl")
 }
-
 
 model Committee {
   id                            String                          @id @default(uuid())
@@ -260,18 +256,18 @@ model Committee {
   beneficiaries_foreign         Int                             @default(0)
   members                       Int                             @default(0)
   handicappeds                  Int                             @default(0)
-  commune                       Int                             @default(0)
+  commune                       String?
   observation                   String?
   coordinator_id                String
   couple_id                     String
   town_id                       String
+  created_at                    DateTime                        @default(now())
+  updated_at                    DateTime                        @updatedAt
+  deleted_at                    DateTime?
   route                         Route
   coordinator                   Coordinator                     @relation(fields: [coordinator_id], references: [id])
   couple                        Couple                          @relation(fields: [couple_id], references: [id])
   town                          Town                            @relation(fields: [town_id], references: [id])
-  created_at                    DateTime                        @default(now())
-  updated_at                    DateTime                        @updatedAt
-  deleted_at                    DateTime?
   @@map("committee")
   @@schema("pvl")
 }
@@ -313,34 +309,71 @@ model Town {
   @@schema("pvl")
 }
 
-// >> SHEME:ULE
+// >> SCHEME: ULE
+enum Format {
+  FSU
+  S100
+  @@schema("ule")
+}
+
+enum Level {
+  P
+  PE
+  NP
+  PU
+  @@map("level")
+  @@schema("ule")
+}
+
+model Enrollment{
+  id                            String                          @id @default(uuid())
+  code                          String                          @unique
+  enrolled_id                   String                          
+  program_id                    String
+  enumerator_id                 String?
+  fsu_id                        String?        
+  s100_id                       String      
+  enrolled                      Enrolled                        @relation(fields: [enrolled_id], references: [id])                       
+  social                        Social                          @relation(fields: [program_id], references: [id])
+  enumerator                    Enumerator?                     @relation(fields: [enumerator_id], references: [id])
+  level                         Level  
+  tip                           Format
+  created_at                    DateTime                        @default(now())
+  deleted_at                    DateTime?
+  @@map("enrollment")
+  @@schema("ule")
+}
+
 model Enrolled{
   id                            String                          @id @default(uuid())
   dni                           String                          @unique
   names                         String
   lastname                      String
   adress                        String?
-  program                       Social                          @relation(fields: [program_id], references: [id])
-  program_id                    String
+  members                       Int                             @default(0)
+  enrollments                   Enrollment[]
   created_at                    DateTime                        @default(now())
   deleted_at                    DateTime?
   @@map("enrolled")
   @@schema("ule")
 }
+
 model Social{
   id                            String                          @id @default(uuid())
   name                          String                          @unique
   created_at                    DateTime                        @default(now())
   deleted_at                    DateTime?
-  enrolleds                     Enrolled[]
+  enrolleds                     Enrollment[]
   @@map("social")
   @@schema("ule")
 }
+
 model Enumerator{
   id                            String                          @id @default(uuid())
   dni                           String                          @unique
   name                          String
   lastname                      String
+  enrollments                   Enrollment[]
   created_at                    DateTime                        @default(now())
   deleted_at                    DateTime?
   @@map("enumerator")
