@@ -19,6 +19,11 @@ import { ConfigModule } from '@nestjs/config';
 import { CenterModule } from './modules/management/subprogram/pca/center/center.module';
 import { DirectiveModule } from './modules/management/subprogram/pca/directive/directive.module';
 import { PresidentModule } from './modules/management/subprogram/pca/president/president.module';
+import { RegisteredModule } from './modules/management/subprogram/ule/registered/registered.module';
+import { BoxModule } from './modules/management/subprogram/ule/box/box.module';
+import { DeclarationModule } from './modules/management/subprogram/ule/declaration/declaration.module';
+import { EnumeratorModule } from './modules/management/subprogram/ule/enumerator/enumerator.module';
+import { UrbanModule } from './modules/management/subprogram/ule/urban/urban.module';
 
 @Module({
   imports: [
@@ -42,6 +47,11 @@ import { PresidentModule } from './modules/management/subprogram/pca/president/p
     CenterModule,
     DirectiveModule,
     PresidentModule,
+    RegisteredModule,
+    BoxModule,
+    DeclarationModule,
+    EnumeratorModule,
+    UrbanModule,
   ],
   controllers: [AppController],
   providers: [AppService],

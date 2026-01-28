@@ -1,4 +1,4 @@
-import { IsOptional, IsString } from 'class-validator';
+import { IsDateString, IsOptional, IsString } from 'class-validator';
 
 export class CreateCoordinatorDto {
   @IsString()
@@ -16,6 +16,6 @@ export class CreateCoordinatorDto {
   phone?: string;
 
   @IsOptional()
-  @IsString()
+  @IsDateString()
   birthday?: string;
 }
