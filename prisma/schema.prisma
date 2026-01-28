@@ -319,63 +319,85 @@ enum Format {
 enum Level {
   P
   PE
-  NP
   PU
-  @@map("level")
+  NP
   @@schema("ule")
 }
 
-model Enrollment{
+model Box {
   id                            String                          @id @default(uuid())
-  code                          String                          @unique
-  enrolled_id                   String                          
-  program_id                    String
-  enumerator_id                 String?
-  fsu_id                        String?        
-  s100_id                       String      
-  enrolled                      Enrolled                        @relation(fields: [enrolled_id], references: [id])                       
-  social                        Social                          @relation(fields: [program_id], references: [id])
-  enumerator                    Enumerator?                     @relation(fields: [enumerator_id], references: [id])
-  level                         Level  
-  tip                           Format
+  code_num                      Int                             @default(0)
   created_at                    DateTime                        @default(now())
+  updated_at                    DateTime                        @updatedAt
   deleted_at                    DateTime?
-  @@map("enrollment")
+  registered                    Registered[]
+  @@map("box")
   @@schema("ule")
 }
 
-model Enrolled{
+model Declaration {
   id                            String                          @id @default(uuid())
-  dni                           String                          @unique
-  names                         String
-  lastname                      String
-  adress                        String?
-  members                       Int                             @default(0)
-  enrollments                   Enrollment[]
+  code                          String
   created_at                    DateTime                        @default(now())
+  updated_at                    DateTime                        @updatedAt
   deleted_at                    DateTime?
-  @@map("enrolled")
+  registered                    Registered[]
+  @@map("declaration")
   @@schema("ule")
 }
 
-model Social{
-  id                            String                          @id @default(uuid())
-  name                          String                          @unique
-  created_at                    DateTime                        @default(now())
-  deleted_at                    DateTime?
-  enrolleds                     Enrollment[]
-  @@map("social")
-  @@schema("ule")
-}
-
-model Enumerator{
+model Enumerator {
   id                            String                          @id @default(uuid())
   dni                           String                          @unique
   name                          String
   lastname                      String
-  enrollments                   Enrollment[]
+  phone                         String?
+  birthday                      DateTime?
   created_at                    DateTime                        @default(now())
+  updated_at                    DateTime                        @updatedAt
   deleted_at                    DateTime?
+  registered                    Registered[]
   @@map("enumerator")
+  @@schema("ule")
+}
+
+model Registered {
+  id                            String                          @id @default(uuid())
+  fsu                           String                          @unique
+  s100                          String                          @unique
+  dni                           String
+  name                          String
+  lastname                      String
+  phone                         String?
+  latitude                      Float?
+  longitude                     Float?
+  members                       Int                             @default(1)
+  birthday                      DateTime?
+  registered_at                 DateTime
+  created_at                    DateTime                        @default(now())
+  updated_at                    DateTime                        @updatedAt
+  deleted_at                    DateTime?
+  box_id                        String
+  declaration_id                String
+  enumerator_id                 String
+  urban_id                      String
+  format                        Format
+  level                         Level
+  box                           Box                             @relation(fields: [box_id], references: [id])
+  declaration                   Declaration                     @relation(fields: [declaration_id], references: [id])                        
+  enumerator                    Enumerator                      @relation(fields: [enumerator_id], references: [id])
+  urban                         Urban                           @relation(fields: [urban_id], references: [id])
+  @@map("registered")
+  @@schema("ule")
+}
+
+model Urban {
+  id                            String                          @id @default(uuid())
+  name                          String                          @unique
+  created_at                    DateTime                        @default(now())
+  updated_at                    DateTime                        @updatedAt
+  deleted_at                    DateTime?
+  registered                    Registered[]
+  @@map("urban")
   @@schema("ule")
 }
