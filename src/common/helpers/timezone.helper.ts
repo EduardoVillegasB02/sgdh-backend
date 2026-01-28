@@ -24,6 +24,12 @@ export function getCurrentYear(): number {
   return Number(fmt.format(new Date()));
 }
 
+export function parseDate(dateStr: string): Date {
+  const [y, m, d] = dateStr.split('-').map(Number);
+  if (!y || !m || !d) throw new Error(`Formato de fecha inválido: ${dateStr}`);
+  return new Date(Date.UTC(y, m - 1, d, 5, 0, 0));
+}
+
 export function createDate(serial: number): Date {
   const epoch = 25569;
   const msPerDay = 24 * 60 * 60 * 1000;

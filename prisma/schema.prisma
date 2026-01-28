@@ -351,6 +351,7 @@ model Enumerator {
   dni                           String                          @unique
   name                          String
   lastname                      String
+  phone                         String?
   birthday                      DateTime?
   created_at                    DateTime                        @default(now())
   updated_at                    DateTime                        @updatedAt
@@ -362,7 +363,6 @@ model Enumerator {
 
 model Registered {
   id                            String                          @id @default(uuid())
-  code                          String                          @unique
   fsu                           String                          @unique
   s100                          String                          @unique
   dni                           String
@@ -371,7 +371,7 @@ model Registered {
   phone                         String?
   latitude                      Float?
   longitude                     Float?
-  members                       Int                             @default(0)
+  members                       Int                             @default(1)
   birthday                      DateTime?
   registered_at                 DateTime
   created_at                    DateTime                        @default(now())
