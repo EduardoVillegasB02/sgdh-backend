@@ -93,7 +93,7 @@ export class EnumeratorService {
         dni: row.dni,
         name: row.name,
         lastname: row.lastname,
-        phone: row.phone ?? null,
+        phone: String(row.phone) ?? null,
         birthday: row.birthday ? parseDate(row.birthday) : null,
         created_at: timezoneHelper(),
         updated_at: timezoneHelper(),

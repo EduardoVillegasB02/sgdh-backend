@@ -98,18 +98,16 @@ export class RegisteredService {
     const data = rows.map((row: any) => {
       return {
         fsu: String(row.fsu),
-        s10: String(row.s100),
+        s100: String(row.s100),
         dni: String(row.dni),
         name: row.name,
         lastname: row.lastname,
         phone: row.phone ? String(row.phone) : null,
         birthday: row.birthday ? parseDate(row.birthday) : null,
-        latitude: row.latitude ? Number(row.latitude) : null,
-        longitude: row.longitude ? Number(row.longitude) : null,
         members: row.members ? Number(row.members) : 0,
-        box: Number(row.code_num),
+        box: Number(row.box),
         declaration: String(row.declaration),
-        enumerator: String(row.dni),
+        enumerator: String(row.enumerator),
         urban: String(row.urban),
         format: row.format,
         level: row.level,
@@ -131,8 +129,18 @@ export class RegisteredService {
       const urband = await this.prisma.urban.findFirst({
         where: { name: d.urban },
       });
-      if (!boxd || !declarationd || !enumratord || !urband)
-        throw new BadRequestException('No hay ID');
+      if (!boxd)
+        throw new BadRequestException(`No existe BOX con code_num: ${d.box}`);
+
+      if (!declarationd)
+        throw new BadRequestException(`No existe DECLARATION con code: ${d.declaration}`);
+
+      if (!enumratord)
+        throw new BadRequestException(`No existe ENUMERATOR con dni: ${d.enumerator}`);
+
+      if (!urband)
+        throw new BadRequestException(`No existe URBAN con name: "${d.urban}"`);
+
       const { box, declaration, enumerator, urban, ...res } = d;
       result.push({
         ...res,
