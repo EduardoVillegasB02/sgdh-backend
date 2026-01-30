@@ -111,6 +111,7 @@ export class RegisteredService {
         urban: String(row.urban),
         format: row.format,
         level: row.level,
+        registered_at: row.registered_at ? parseDate(row.registered_at) : null,
         created_at: timezoneHelper(),
         updated_at: timezoneHelper(),
       };
@@ -131,16 +132,16 @@ export class RegisteredService {
       });
       if (!boxd)
         throw new BadRequestException(`No existe BOX con code_num: ${d.box}`);
-
       if (!declarationd)
-        throw new BadRequestException(`No existe DECLARATION con code: ${d.declaration}`);
-
+        throw new BadRequestException(
+          `No existe DECLARATION con code: ${d.declaration}`,
+        );
       if (!enumratord)
-        throw new BadRequestException(`No existe ENUMERATOR con dni: ${d.enumerator}`);
-
+        throw new BadRequestException(
+          `No existe ENUMERATOR con dni: ${d.enumerator}`,
+        );
       if (!urband)
-        throw new BadRequestException(`No existe URBAN con name: "${d.urban}"`);
-
+        throw new BadRequestException(`No existe URBAN con name: ${d.urban}`);
       const { box, declaration, enumerator, urban, ...res } = d;
       result.push({
         ...res,
