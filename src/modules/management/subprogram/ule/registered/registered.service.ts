@@ -104,8 +104,6 @@ export class RegisteredService {
         lastname: row.lastname,
         phone: row.phone ? String(row.phone) : null,
         birthday: row.birthday ? parseDate(row.birthday) : null,
-        latitude: row.latitude ? Number(row.latitude) : null,
-        longitude: row.longitude ? Number(row.longitude) : null,
         members: row.members ? Number(row.members) : 0,
         box: Number(row.box),
         declaration: String(row.declaration),
