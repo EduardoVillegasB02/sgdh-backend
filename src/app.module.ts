@@ -24,6 +24,10 @@ import { BoxModule } from './modules/management/subprogram/ule/box/box.module';
 import { DeclarationModule } from './modules/management/subprogram/ule/declaration/declaration.module';
 import { EnumeratorModule } from './modules/management/subprogram/ule/enumerator/enumerator.module';
 import { UrbanModule } from './modules/management/subprogram/ule/urban/urban.module';
+import { EducationModule } from './modules/management/subprogram/pam/education/education.module';
+import { EthnicModule } from './modules/management/subprogram/pam/ethnic/ethnic.module';
+import { HousingModule } from './modules/management/subprogram/pam/housing/housing.module';
+import { LanguageModule } from './modules/management/subprogram/pam/language/language.module';
 
 @Module({
   imports: [
@@ -52,6 +56,10 @@ import { UrbanModule } from './modules/management/subprogram/ule/urban/urban.mod
     DeclarationModule,
     EnumeratorModule,
     UrbanModule,
+    EducationModule,
+    EthnicModule,
+    HousingModule,
+    LanguageModule
   ],
   controllers: [AppController],
   providers: [AppService],
