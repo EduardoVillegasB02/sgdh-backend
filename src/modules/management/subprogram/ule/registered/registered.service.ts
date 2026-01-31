@@ -1,5 +1,5 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
-import { Registered } from '@prisma/client';
+import { Level, Registered } from '@prisma/client';
 import * as xlsx from 'xlsx';
 import { CreateRegisteredDto, UpdateRegisteredDto } from './dto';
 import { PrismaService } from '../../../../../prisma/prisma.service';
@@ -42,8 +42,8 @@ export class RegisteredService {
       this.prisma.registered,
       {
         where,
-        orderBy: { code: 'asc' },
-        include: { coordinator: true, couple: true, town: true },
+        orderBy: { dni: 'asc' },
+        include: { enumerator: true, urban: true, box: true, declaration: true },
       },
       pagination,
     );
@@ -98,21 +98,20 @@ export class RegisteredService {
     const data = rows.map((row: any) => {
       return {
         fsu: String(row.fsu),
-        s10: String(row.s100),
+        s100: String(row.s100),
         dni: String(row.dni),
         name: row.name,
         lastname: row.lastname,
         phone: row.phone ? String(row.phone) : null,
         birthday: row.birthday ? parseDate(row.birthday) : null,
-        latitude: row.latitude ? Number(row.latitude) : null,
-        longitude: row.longitude ? Number(row.longitude) : null,
         members: row.members ? Number(row.members) : 0,
-        box: Number(row.code_num),
+        box: Number(row.box),
         declaration: String(row.declaration),
-        enumerator: String(row.dni),
+        enumerator: String(row.enumerator),
         urban: String(row.urban),
         format: row.format,
-        level: row.level,
+        level: row.level === 'P' ? Level.P : row.level === 'PE' ? Level.PE : row.level === 'PU' ? Level.PU : Level.NP,
+        registered_at: row.registered_at ? parseDate(row.registered_at) : null,
         created_at: timezoneHelper(),
         updated_at: timezoneHelper(),
       };
@@ -131,8 +130,18 @@ export class RegisteredService {
       const urband = await this.prisma.urban.findFirst({
         where: { name: d.urban },
       });
-      if (!boxd || !declarationd || !enumratord || !urband)
-        throw new BadRequestException('No hay ID');
+      if (!boxd)
+        throw new BadRequestException(`No existe BOX con code_num: ${d.box}`);
+      if (!declarationd)
+        throw new BadRequestException(
+          `No existe DECLARATION con code: ${d.declaration}`,
+        );
+      if (!enumratord)
+        throw new BadRequestException(
+          `No existe ENUMERATOR con dni: ${d.enumerator}`,
+        );
+      if (!urband)
+        throw new BadRequestException(`No existe URBAN con name: ${d.urban}`);
       const { box, declaration, enumerator, urban, ...res } = d;
       result.push({
         ...res,

@@ -80,7 +80,7 @@ export class DeclarationService {
     const rows = xlsx.utils.sheet_to_json(workbook.Sheets[sheetName]);
     const data = rows.map((row: any) => {
       return {
-        code: row.code,
+        code: String(row.code),
         created_at: timezoneHelper(),
         updated_at: timezoneHelper(),
       };
