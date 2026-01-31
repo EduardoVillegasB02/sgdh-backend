@@ -1,5 +1,5 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
-import { Registered } from '@prisma/client';
+import { Level, Registered } from '@prisma/client';
 import * as xlsx from 'xlsx';
 import { CreateRegisteredDto, UpdateRegisteredDto } from './dto';
 import { PrismaService } from '../../../../../prisma/prisma.service';
@@ -42,8 +42,8 @@ export class RegisteredService {
       this.prisma.registered,
       {
         where,
-        orderBy: { code: 'asc' },
-        include: { coordinator: true, couple: true, town: true },
+        orderBy: { dni: 'asc' },
+        include: { enumerator: true, urban: true, box: true, declaration: true },
       },
       pagination,
     );
@@ -110,7 +110,7 @@ export class RegisteredService {
         enumerator: String(row.enumerator),
         urban: String(row.urban),
         format: row.format,
-        level: row.level,
+        level: row.level === 'P' ? Level.P : row.level === 'PE' ? Level.PE : row.level === 'PU' ? Level.PU : Level.NP,
         registered_at: row.registered_at ? parseDate(row.registered_at) : null,
         created_at: timezoneHelper(),
         updated_at: timezoneHelper(),
