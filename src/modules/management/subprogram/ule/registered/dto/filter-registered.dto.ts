@@ -1,25 +1,38 @@
-import { Modality } from '@prisma/client';
+import { Format, Level } from '@prisma/client';
 import {
   IsDateString,
   IsEnum,
   IsOptional,
   IsString,
-  IsUUID,
+  IsUUID
 } from 'class-validator';
 import { SearchDto } from '../../../../../../common/dto';
 
-export class FilterCenterDto extends SearchDto {
+export class FilterRegisteredDto extends SearchDto {
+
   @IsOptional()
-  @IsUUID()
-  president_id?: string;
+  @IsEnum(Format)
+  format?: Format;
+
+  @IsOptional()
+  @IsEnum(Level)
+  level?: Level;
 
   @IsOptional()
   @IsUUID()
-  directive_id?: string;
+  box_id? : string;
 
   @IsOptional()
-  @IsEnum(Modality)
-  modality?: Modality;
+  @IsUUID()
+  declaration_id? : string;
+
+  @IsOptional()
+  @IsUUID()
+  enumerator_id? : string;
+
+  @IsOptional()
+  @IsUUID()
+  urban_id? : string;
 
   @IsOptional()
   @IsString()
@@ -31,17 +44,17 @@ export class FilterCenterDto extends SearchDto {
 
   @IsOptional()
   @IsString()
-  president_age_min?: string;
+  age_min?: string;
 
   @IsOptional()
   @IsString()
-  president_age_max?: string;
+  age_max?: string;
 
   @IsOptional()
   @IsDateString()
-  president_birthday_day?: string;
+  birthday_day?: string;
 
   @IsOptional()
   @IsString()
-  president_birthday_month?: string;
+  birthday_month?: string;
 }
