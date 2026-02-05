@@ -32,6 +32,7 @@ import { CountryModule } from './modules/management/subprogram/pam/country/count
 import { DepartmentModule } from './modules/management/subprogram/pam/department/department.module';
 import { DistrictModule } from './modules/management/subprogram/pam/district/district.module';
 import { ProvinceModule } from './modules/management/subprogram/pam/province/province.module';
+import { GeneralModule } from './modules/management/general/general.module';
 
 @Module({
   imports: [
@@ -63,11 +64,12 @@ import { ProvinceModule } from './modules/management/subprogram/pam/province/pro
     EducationModule,
     EthnicModule,
     HousingModule,
-    LanguageModule
+    LanguageModule,
     CountryModule,
     DepartmentModule,
     DistrictModule,
     ProvinceModule,
+    GeneralModule,
   ],
   controllers: [AppController],
   providers: [AppService],

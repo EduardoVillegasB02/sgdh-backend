@@ -45,6 +45,14 @@ enum Resource {
   @@schema("initial")
 }
 
+enum Send {
+  ANSWERED
+  FAILED
+  PENDING
+  SENT
+  @@schema("initial")
+}
+
 enum Status {
   BLOCKED
   FAILED
@@ -104,6 +112,41 @@ model Audit {
   @@schema("initial")
 }
 
+model General {
+  id                            String                          @id @default(uuid())
+  name                          String
+  lastname                      String
+  dni                           String?                         @unique
+  phone                         String?
+  birthday                      DateTime?
+  message                       String?
+  answer                        String?
+  citizen_id                    String
+  module_id                     String
+  created_at                    DateTime                        @default(now())
+  updated_at                    DateTime                        @updatedAt
+  deleted_at                    DateTime?
+  send                          Send?
+  module                        Module                          @relation(fields: [module_id], references: [id])
+  @@map("general")
+  @@schema("initial")
+}
+
+model Module {
+  id                            String                          @id @default(uuid())
+  name                          String                          @unique
+  program_id                    String
+  created_at                    DateTime                        @default(now())
+  deleted_at                    DateTime?
+  program                       Program                         @relation(fields: [program_id], references: [id])
+  assignments                   Assignment[]
+  general                       General[]
+  @@index([program_id])
+  @@unique([name, program_id])
+  @@map("module")
+  @@schema("initial")
+}
+
 model Permission {
   id                            String                          @id @default(uuid())
   created_at                    DateTime                        @default(now())
@@ -124,20 +167,6 @@ model Program {
   assignments                   Assignment[]
   modules                       Module[]
   @@map("program")
-  @@schema("initial")
-}
-
-model Module {
-  id                            String                          @id @default(uuid())
-  name                          String                          @unique
-  program_id                    String
-  created_at                    DateTime                        @default(now())
-  deleted_at                    DateTime?
-  program                       Program                         @relation(fields: [program_id], references: [id])
-  assignments                   Assignment[]
-  @@index([program_id])
-  @@unique([name, program_id])
-  @@map("module")
   @@schema("initial")
 }
 
