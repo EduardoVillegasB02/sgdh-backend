@@ -1,7 +1,7 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { Level, Registered } from '@prisma/client';
 import * as xlsx from 'xlsx';
-import { CreateRegisteredDto, UpdateRegisteredDto } from './dto';
+import { CreateRegisteredDto, FilterRegisteredDto, UpdateRegisteredDto } from './dto';
 import { PrismaService } from '../../../../../prisma/prisma.service';
 import {
   paginationHelper,
@@ -29,7 +29,7 @@ export class RegisteredService {
     return this.getRegisteredById(registered.id);
   }
 
-  async findAll(dto: SearchDto): Promise<any> {
+  async findAll(dto: FilterRegisteredDto): Promise<any> {
     const { search, ...pagination } = dto;
     const where: any = { deleted_at: null };
     if (search)
