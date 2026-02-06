@@ -63,7 +63,7 @@ import { ProvinceModule } from './modules/management/subprogram/pam/province/pro
     EducationModule,
     EthnicModule,
     HousingModule,
-    LanguageModule
+    LanguageModule,
     CountryModule,
     DepartmentModule,
     DistrictModule,
