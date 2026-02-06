@@ -90,7 +90,10 @@ export class LanguageService {
     return { success: true };
   }
 
-  private async getLanguageById(id: string, toogle: boolean = false): Promise<any> {
+  private async getLanguageById(
+    id: string,
+    toogle: boolean = false,
+  ): Promise<any> {
     const language = await this.prisma.language.findUnique({
       where: { id },
     });

@@ -37,7 +37,10 @@ export class EducationController {
   }
 
   @Patch(':id')
-  update(@Param('id', ParseUUIDPipe) id: string, @Body() dto: UpdateEducationDto) {
+  update(
+    @Param('id', ParseUUIDPipe) id: string,
+    @Body() dto: UpdateEducationDto,
+  ) {
     return this.EducationService.update(id, dto);
   }
 

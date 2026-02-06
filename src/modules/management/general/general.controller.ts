@@ -18,11 +18,11 @@ export class GeneralController {
 
   @Patch('send/:id')
   sendMessage(@Param('id') id: string, @Body() dto: { message: string }) {
-    return this.generalService.sendMessage(id, dto.message)
+    return this.generalService.sendMessage(id, dto.message);
   }
 
   @Patch('answer/:id')
   sendanswer(@Param('id') id: string, @Body() dto: { answer: string }) {
-    return this.generalService.answerMessage(id, dto.answer)
+    return this.generalService.answerMessage(id, dto.answer);
   }
 }

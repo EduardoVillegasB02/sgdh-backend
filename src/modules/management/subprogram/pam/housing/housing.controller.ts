@@ -37,7 +37,10 @@ export class HousingController {
   }
 
   @Patch(':id')
-  update(@Param('id', ParseUUIDPipe) id: string, @Body() dto: UpdateHousingDto) {
+  update(
+    @Param('id', ParseUUIDPipe) id: string,
+    @Body() dto: UpdateHousingDto,
+  ) {
     return this.HousingService.update(id, dto);
   }
 

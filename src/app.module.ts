@@ -33,6 +33,7 @@ import { DepartmentModule } from './modules/management/subprogram/pam/department
 import { DistrictModule } from './modules/management/subprogram/pam/district/district.module';
 import { ProvinceModule } from './modules/management/subprogram/pam/province/province.module';
 import { GeneralModule } from './modules/management/general/general.module';
+import { BenefitedModule } from './modules/management/subprogram/pam/benefited/benefited.module';
 
 @Module({
   imports: [
@@ -70,6 +71,7 @@ import { GeneralModule } from './modules/management/general/general.module';
     DistrictModule,
     ProvinceModule,
     GeneralModule,
+    BenefitedModule,
   ],
   controllers: [AppController],
   providers: [AppService],

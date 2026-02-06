@@ -90,7 +90,10 @@ export class HousingService {
     return { success: true };
   }
 
-  private async getHousingById(id: string, toogle: boolean = false): Promise<any> {
+  private async getHousingById(
+    id: string,
+    toogle: boolean = false,
+  ): Promise<any> {
     const housing = await this.prisma.housing.findUnique({
       where: { id },
     });

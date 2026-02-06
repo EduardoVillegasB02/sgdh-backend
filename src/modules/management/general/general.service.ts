@@ -85,8 +85,7 @@ export class GeneralService {
     const citizen = await this.prisma.general.findFirst({
       where: { id },
     });
-    if (!citizen)
-      throw new BadRequestException('Persona no encontrada');
+    if (!citizen) throw new BadRequestException('Persona no encontrada');
     return citizen;
   }
 }
