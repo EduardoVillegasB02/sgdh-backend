@@ -90,7 +90,10 @@ export class EducationService {
     return { success: true };
   }
 
-  private async getEducationById(id: string, toogle: boolean = false): Promise<any> {
+  private async getEducationById(
+    id: string,
+    toogle: boolean = false,
+  ): Promise<any> {
     const education = await this.prisma.education.findUnique({
       where: { id },
     });

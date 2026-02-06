@@ -37,7 +37,10 @@ export class LanguageController {
   }
 
   @Patch(':id')
-  update(@Param('id', ParseUUIDPipe) id: string, @Body() dto: UpdateLanguageDto) {
+  update(
+    @Param('id', ParseUUIDPipe) id: string,
+    @Body() dto: UpdateLanguageDto,
+  ) {
     return this.LanguageService.update(id, dto);
   }
 
