@@ -13,7 +13,7 @@ import {
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { RegisteredService } from './registered.service';
-import { CreateRegisteredDto, UpdateRegisteredDto } from './dto';
+import { CreateRegisteredDto, FilterRegisteredDto, UpdateRegisteredDto } from './dto';
 import { SuccessMessage } from '../../../../../common/decorators';
 import { SearchDto } from '../../../../../common/dto';
 
@@ -22,7 +22,7 @@ export class RegisteredController {
   constructor(private readonly registeredService: RegisteredService) {}
 
   @Get()
-  findAll(@Query() dto: SearchDto) {
+  findAll(@Query() dto: FilterRegisteredDto) {
     return this.registeredService.findAll(dto);
   }
 

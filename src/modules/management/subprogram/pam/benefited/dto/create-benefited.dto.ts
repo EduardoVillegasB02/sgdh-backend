@@ -113,9 +113,9 @@ export class CreateBenefitedDto {
   @IsOptional()
   monthly_income?: number;
 
-  @IsBoolean()
+  @IsString()
   @IsOptional()
-  other_income?: boolean;
+  other_income?: string;
 
   @IsString()
   @IsOptional()
