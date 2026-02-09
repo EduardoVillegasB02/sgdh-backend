@@ -287,7 +287,7 @@ model Benefited {
   occupation_type               String?
   occupation_other              String?
   monthly_income                Float?
-  other_income                  Boolean?
+  other_income                  String?
   income_source                 String?
   income_amount                 Float?
   health_problem                Boolean?
@@ -316,9 +316,9 @@ model Benefited {
   country_id                    String
   department_birth_id           String?
   department_live_id            String?
-  education_id                  String
+  education_id                  String?
   ethnic_id                     String?
-  housing_id                    String
+  housing_id                    String?
   language_learned_id           String?
   language_native_id            String?
   district_live_id              String?
@@ -335,7 +335,7 @@ model Benefited {
   department_birth              Department?                     @relation("DepartmentBirth",fields: [department_birth_id], references: [id])
   department_live               Department?                     @relation("DepartmentLive",fields: [department_live_id], references: [id])
   district_live                 District?                       @relation(fields: [district_live_id], references: [id])
-  education                     Education                       @relation(fields: [education_id], references: [id])
+  education                     Education?                      @relation(fields: [education_id], references: [id])
   ethnic                        Ethnic?                         @relation(fields: [ethnic_id], references: [id])
   housing                       Housing?                        @relation(fields: [housing_id], references: [id])
   language_learned              Language?                       @relation("LanguageLearned", fields: [language_learned_id], references: [id])
