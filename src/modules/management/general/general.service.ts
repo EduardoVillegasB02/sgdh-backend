@@ -8,6 +8,7 @@ import {
   timezoneHelper,
 } from '../../../common/helpers';
 import { Send } from '@prisma/client';
+import { selectBenefited } from '../subprogram/pam/benefited/helpers';
 
 @Injectable()
 export class GeneralService {
@@ -27,6 +28,14 @@ export class GeneralService {
       {
         where,
         orderBy: { lastname: 'asc' },
+        include: {
+          module:{
+            select: {
+              id: true,
+              name: true,
+            }
+          }
+        }
       },
       pagination,
     );
