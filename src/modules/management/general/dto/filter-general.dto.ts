@@ -1,4 +1,3 @@
-import { Send } from '@prisma/client';
 import { IsDateString, IsEnum, IsOptional, IsUUID } from 'class-validator';
 import { SearchDto } from 'src/common/dto';
 
@@ -8,10 +7,18 @@ export class FilterGeneralDto extends SearchDto {
   module_id?: string;
 
   @IsOptional()
-  @IsDateString()
-  bithday?: string;
+  age?: number;
 
   @IsOptional()
-  @IsEnum(Send)
-  send?: Send;
+  age_min?: number;
+
+  @IsOptional()
+  age_max?: number;
+
+  @IsOptional()
+  month?: string;
+
+  @IsOptional()
+  @IsDateString()
+  birthday?: string;
 }

@@ -29,13 +29,13 @@ export class GeneralService {
         where,
         orderBy: { lastname: 'asc' },
         include: {
-          module:{
+          module: {
             select: {
               id: true,
               name: true,
-            }
-          }
-        }
+            },
+          },
+        },
       },
       pagination,
     );
