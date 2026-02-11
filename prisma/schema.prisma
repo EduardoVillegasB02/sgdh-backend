@@ -7,7 +7,7 @@ datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
   directUrl = env("DIRECT_URL")
-  schemas  = ["initial", "pam", "pca", "pvl", "ule"]
+  schemas  = ["initial", "pam", "pca", "pvl", "omaped", "ule"]
 }
 
 // >> SCHEMA: initial
@@ -591,6 +591,61 @@ model Town {
   comittees                     Committee[]
   @@map("town")
   @@schema("pvl")
+}
+
+// >> SCHEMA: OMAPED
+enum Degree {
+  MILD
+  MODERATE
+  PROCESS
+  OTHER
+  SEVERE
+  @@schema("omaped")
+}
+
+model Disabled {
+  id                            String                          @id @default(uuid())
+  name                          String
+  lastname                      String
+  doc_num                       String?
+  phone                         String?
+  address                       String?
+  certificate                   String?
+  diagnostic1                   String?
+  diagnostic2                   String?
+  folio                         String?
+  atention                      String?
+  cert_disc                     String?
+  beca                          String?
+  job_placement                 Boolean                         @default(false)
+  entrepreneurship              String?
+  therapy                       String?
+  therapy_schedule              String?
+  reniec                        String?
+  reniec_shift                  String?
+  fair                          String?
+  conadis                       String?
+  conadis_date                  String?
+  conadis_procedure             String?
+  conadis_validity              String?
+  unnamed                       String?
+  contigo                       String?
+  pc1000                        String?
+  fad                           String?
+  census_taker                  String?
+  state                         String?
+  commune                       String?
+  wheelchair                    String?
+  birthday                      DateTime?
+  registered_at                 DateTime?
+  change_at                     DateTime?
+  created_at                    DateTime                        @default(now())
+  updated_at                    DateTime                        @updatedAt
+  deleted_at                    DateTime?
+  degree                        Degree?
+  doc_type                      Doctype?
+  @@map("disabled")
+  @@schema("omaped")
 }
 
 // >> SCHEME: ULE
