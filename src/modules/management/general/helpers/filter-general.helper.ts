@@ -3,7 +3,7 @@ import { FilterGeneralDto } from '../dto';
 export function filterGeneral(dto: FilterGeneralDto): any {
   const {
     search,
-    module_id,
+    module_name,
     birthday,
     month,
     age,
@@ -22,8 +22,14 @@ export function filterGeneral(dto: FilterGeneralDto): any {
     ];
   }
 
-  if (module_id) where.module_id = module_id;
-
+  if (module_name) {
+  where.module = {
+    name: {
+      equals: module_name,
+      mode: 'insensitive',
+    },
+  };
+}
   const today = new Date();
 
   if (age) {
@@ -46,25 +52,20 @@ export function filterGeneral(dto: FilterGeneralDto): any {
   }
 
   if (age_min || age_max) {
-    let gte;
-    let lte;
-
-    if (age_max) {
+    let gte: any
+    let lte: any
+    if (age_max) 
       gte = new Date(
         today.getFullYear() - Number(age_max) - 1,
         today.getMonth(),
         today.getDate() + 1,
       );
-    }
-
-    if (age_min) {
+    if (age_min)
       lte = new Date(
         today.getFullYear() - Number(age_min),
         today.getMonth(),
         today.getDate(),
       );
-    }
-
     where.birthday = {
       ...(gte && { gte }),
       ...(lte && { lte }),
@@ -72,32 +73,26 @@ export function filterGeneral(dto: FilterGeneralDto): any {
   }
 
   if (birthday) {
-    const parts = birthday.split('-');
+    const [monthStr, dayStr] = birthday.split('-');
 
-  if (parts.length !== 2) return { where, pagination };
+    const m = Number(monthStr) - 1;
+    const d = Number(dayStr);
 
-  const m = Number(parts[0]);
-  const d = Number(parts[1]);
+    const ranges: any[] = [];
 
-  if (isNaN(m) || isNaN(d)) return { where, pagination };
-
-  const ranges: any[] = [];
-
-  for (let year = 1900; year <= 2100; year++) {
-    ranges.push({
-      birthday: {
-        gte: new Date(Date.UTC(year, m - 1, d, 0, 0, 0)),
-        lte: new Date(Date.UTC(year, m - 1, d, 23, 59, 59)),
-      },
-    });
+    for (let year = 1900; year <= 2100; year++) {
+      ranges.push({
+        birthday: {
+          gte: new Date(Date.UTC(year, m, d, 0, 0, 0)),
+          lte: new Date(Date.UTC(year, m, d, 23, 59, 59)),
+        },
+      });
+    }
+    where.AND = [
+      ...(where.AND || []),
+      { OR: ranges },
+    ];
   }
-
-  where.AND = [
-    ...(where.AND || []),
-    { OR: ranges },
-  ];
-}
-
   if (month) {
     const m = Number(month);
     const ranges: any[] = [];
@@ -113,7 +108,6 @@ export function filterGeneral(dto: FilterGeneralDto): any {
       { OR: ranges },
     ];
   }
-
   return {
     where,
     pagination: { ...pagination },

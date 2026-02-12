@@ -1,45 +1,28 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
-import * as xlsx from 'xlsx';
 import { FilterGeneralDto } from './dto';
 import { PrismaService } from '../../../prisma/prisma.service';
 import {
   paginationHelper,
-  parseDate,
   timezoneHelper,
 } from '../../../common/helpers';
 import { Send } from '@prisma/client';
-import { selectBenefited } from '../subprogram/pam/benefited/helpers';
+import { filterGeneral } from './helpers';
 
 @Injectable()
 export class GeneralService {
   constructor(private readonly prisma: PrismaService) {}
 
   async findAll(dto: FilterGeneralDto): Promise<any> {
-    const { search, ...pagination } = dto;
-    const where: any = { deleted_at: null };
-    if (search)
-      where.OR = [
-        { dni: { contains: search, mode: 'insensitive' } },
-        { name: { contains: search, mode: 'insensitive' } },
-        { lastname: { contains: search, mode: 'insensitive' } },
-      ];
-    return paginationHelper(
-      this.prisma.general,
-      {
-        where,
-        orderBy: { lastname: 'asc' },
-        include: {
-          module: {
-            select: {
-              id: true,
-              name: true,
-            },
-          },
+      const { where, pagination } = filterGeneral(dto);
+      return paginationHelper(
+        this.prisma.general,
+        {
+          where,
+          orderBy: { name: 'asc' },
         },
-      },
-      pagination,
-    );
-  }
+        pagination,
+      );
+    }
 
   async getForMessage() {
     const today = timezoneHelper();
