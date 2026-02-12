@@ -1,12 +1,12 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { Disabled } from '@prisma/client';
-import { CreateDisabledDto, UpdateDisabledDto } from './dto';
+import { CreateDisabledDto, FilterDisabledDto, UpdateDisabledDto } from './dto';
 import { PrismaService } from '../../../../../prisma/prisma.service';
 import {
   paginationHelper,
   timezoneHelper,
 } from '../../../../../common/helpers';
-import { SearchDto } from '../../../../../common/dto';
+import { filterDisabled, selectDisabled } from './helpers';
 
 @Injectable()
 export class DisabledService {
@@ -22,20 +22,14 @@ export class DisabledService {
     return await this.getDisabledById(disabled.id);
   }
 
-  async findAll(dto: SearchDto): Promise<any> {
-    const { search, ...pagination } = dto;
-    const where: any = { deleted_at: null };
-    if (search)
-      where.OR = [
-        { name: { contains: search, mode: 'insensitive' } },
-        { lastname: { contains: search, mode: 'insensitive' } },
-        { doc_num: { contains: search, mode: 'insensitive' } },
-      ];
+  async findAll(dto: FilterDisabledDto): Promise<any> {
+    const { where, pagination } = filterDisabled(dto);
     return paginationHelper(
       this.prisma.disabled,
       {
         where,
         orderBy: { lastname: 'asc' },
+        select: selectDisabled(true),
       },
       pagination,
     );
@@ -77,9 +71,10 @@ export class DisabledService {
   private async getDisabledById(
     id: string,
     toggle: boolean = false,
-  ): Promise<Disabled> {
+  ): Promise<any> {
     const disabled = await this.prisma.disabled.findUnique({
       where: { id },
+      select: selectDisabled(),
     });
     if (!disabled)
       throw new BadRequestException('Persona con discapacidad no encontrada');
