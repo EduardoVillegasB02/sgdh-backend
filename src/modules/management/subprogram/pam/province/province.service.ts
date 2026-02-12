@@ -81,8 +81,8 @@ export class ProvinceService {
     const data = rows.map((row: any) => {
       return {
         name: String(row.name),
-        country: String(row.country),
-        department: String(row.department),
+        country: row.country_id,
+        department: row.department_id,
         created_at: timezoneHelper(),
         updated_at: timezoneHelper(),
       };

@@ -11,11 +11,6 @@ export class GeneralController {
     return this.generalService.findAll(dto);
   }
 
-  @Get('birthday')
-  getForMessage() {
-    return this.generalService.getForMessage();
-  }
-
   @Patch('send/:id')
   sendMessage(@Param('id') id: string, @Body() dto: { message: string }) {
     return this.generalService.sendMessage(id, dto.message);

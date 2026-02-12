@@ -1,4 +1,4 @@
-import { IsDateString, IsEnum, IsOptional, IsUUID } from 'class-validator';
+import { IsOptional, IsUUID } from 'class-validator';
 import { SearchDto } from 'src/common/dto';
 
 export class FilterGeneralDto extends SearchDto {
@@ -19,6 +19,5 @@ export class FilterGeneralDto extends SearchDto {
   month?: string;
 
   @IsOptional()
-  @IsDateString()
   birthday?: string;
 }
