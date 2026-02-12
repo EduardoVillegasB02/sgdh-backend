@@ -34,18 +34,17 @@ export class FilterCommitteeDto extends SearchDto {
   beneficiaries_max?: string;
 
   @IsOptional()
-  @IsString()
-  coordinator_age_min?: string;
+  age?: number;
 
   @IsOptional()
-  @IsString()
-  coordinator_age_max?: string;
+  age_min?: number;
 
   @IsOptional()
-  @IsDateString()
-  coordinator_birthday_day?: string;
+  age_max?: number;
 
   @IsOptional()
-  @IsString()
-  coordinator_birthday_month?: string;
+  month?: string;
+
+  @IsOptional()
+  birthday?: string;
 }
