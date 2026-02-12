@@ -10,15 +10,14 @@ import {
   Query,
 } from '@nestjs/common';
 import { DisabledService } from './disabled.service';
-import { CreateDisabledDto, UpdateDisabledDto } from './dto';
-import { SearchDto } from '../../../../../common/dto';
+import { CreateDisabledDto, FilterDisabledDto, UpdateDisabledDto } from './dto';
 
 @Controller('omaped/disabled')
 export class DisabledController {
   constructor(private readonly disabledService: DisabledService) {}
 
   @Get()
-  findAll(@Query() dto: SearchDto) {
+  findAll(@Query() dto: FilterDisabledDto) {
     return this.disabledService.findAll(dto);
   }
 
