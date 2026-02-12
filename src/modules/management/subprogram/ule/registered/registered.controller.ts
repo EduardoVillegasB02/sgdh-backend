@@ -13,7 +13,11 @@ import {
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { RegisteredService } from './registered.service';
-import { CreateRegisteredDto, FilterRegisteredDto, UpdateRegisteredDto } from './dto';
+import {
+  CreateRegisteredDto,
+  FilterRegisteredDto,
+  UpdateRegisteredDto,
+} from './dto';
 import { SuccessMessage } from '../../../../../common/decorators';
 
 @Controller('ule/registered')

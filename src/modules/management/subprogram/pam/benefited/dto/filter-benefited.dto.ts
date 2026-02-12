@@ -84,6 +84,15 @@ export class FilterBenefitedDto extends SearchDto {
   sex?: Sex;
 
   @IsOptional()
+  age?: number;
+
+  @IsOptional()
+  age_min?: number;
+
+  @IsOptional()
+  age_max?: number;
+
+  @IsOptional()
   month?: string;
 
   @IsOptional()
