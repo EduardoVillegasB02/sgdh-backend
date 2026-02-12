@@ -72,27 +72,31 @@ export function filterGeneral(dto: FilterGeneralDto): any {
   }
 
   if (birthday) {
-    const [monthStr, dayStr] = birthday.split('-');
+    const parts = birthday.split('-');
 
-    const m = Number(monthStr) - 1;
-    const d = Number(dayStr);
+  if (parts.length !== 2) return { where, pagination };
 
-    const ranges: any[] = [];
+  const m = Number(parts[0]);
+  const d = Number(parts[1]);
 
-    for (let year = 1900; year <= 2100; year++) {
-      ranges.push({
-        birthday: {
-          gte: new Date(Date.UTC(year, m, d, 0, 0, 0)),
-          lte: new Date(Date.UTC(year, m, d, 23, 59, 59)),
-        },
-      });
-    }
+  if (isNaN(m) || isNaN(d)) return { where, pagination };
 
-    where.AND = [
-      ...(where.AND || []),
-      { OR: ranges },
-    ];
+  const ranges: any[] = [];
+
+  for (let year = 1900; year <= 2100; year++) {
+    ranges.push({
+      birthday: {
+        gte: new Date(Date.UTC(year, m - 1, d, 0, 0, 0)),
+        lte: new Date(Date.UTC(year, m - 1, d, 23, 59, 59)),
+      },
+    });
   }
+
+  where.AND = [
+    ...(where.AND || []),
+    { OR: ranges },
+  ];
+}
 
   if (month) {
     const m = Number(month);

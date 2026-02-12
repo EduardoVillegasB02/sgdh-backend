@@ -106,44 +106,41 @@ export function filterBenefited(dto: FilterBenefitedDto): any {
   }
 
   if (birthday) {
-    const date = parseDate(birthday);
+    const [monthStr, dayStr] = birthday.split('-');
 
-    const month = date.getUTCMonth();
-    const day = date.getUTCDate();
+    const m = Number(monthStr) - 1;
+    const d = Number(dayStr);
 
     const ranges: any[] = [];
 
     for (let year = 1900; year <= 2100; year++) {
-      const start = new Date(Date.UTC(year, month, day, 0, 0, 0));
-      const end = new Date(Date.UTC(year, month, day, 23, 59, 59));
-
       ranges.push({
         birthday: {
-          gte: start,
-          lte: end,
+          gte: new Date(Date.UTC(year, m, d, 0, 0, 0)),
+          lte: new Date(Date.UTC(year, m, d, 23, 59, 59)),
         },
       });
     }
 
-    where.OR = [...(where.OR || []), ...ranges];
+    where.AND = [
+      ...(where.AND || []),
+      { OR: ranges },
+    ];
   }
   if (month) {
-    const m = Number(month) - 1;
+    const m = Number(month);
     const ranges: any[] = [];
-
-    for (let year = 1900; year <= 2100; year++) {
-      const start = new Date(Date.UTC(year, m, 1, 0, 0, 0));
-      const end = new Date(Date.UTC(year, m + 1, 0, 23, 59, 59)); // último día del mes
-
+    for (let year = 1900; year <= 2100; year++)
       ranges.push({
         birthday: {
-          gte: start,
-          lte: end,
+          gte: new Date(Date.UTC(year, m - 1, 1)),
+          lt: new Date(Date.UTC(year, m, 1)),
         },
       });
-    }
-
-    where.AND = [...(where.AND || []), { OR: ranges }];
+    where.AND = [
+      ...(where.AND || []),
+      { OR: ranges },
+    ];
   }
   return {
     where,
