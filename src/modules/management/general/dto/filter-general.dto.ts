@@ -3,8 +3,7 @@ import { SearchDto } from 'src/common/dto';
 
 export class FilterGeneralDto extends SearchDto {
   @IsOptional()
-  @IsUUID()
-  module_id?: string;
+  module_name?: string;
 
   @IsOptional()
   age?: number;

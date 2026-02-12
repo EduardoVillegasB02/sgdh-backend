@@ -1,5 +1,4 @@
 import { FilterBenefitedDto } from '../dto';
-import { parseDate } from '../../../../../../common/helpers';
 
 export function filterBenefited(dto: FilterBenefitedDto): any {
   const {
@@ -80,25 +79,20 @@ export function filterBenefited(dto: FilterBenefitedDto): any {
   }
 
   if (age_min || age_max) {
-    let gte;
-    let lte;
-
-    if (age_max) {
+    let gte: any
+    let lte: any
+    if (age_max) 
       gte = new Date(
         today.getFullYear() - Number(age_max) - 1,
         today.getMonth(),
         today.getDate() + 1,
       );
-    }
-
-    if (age_min) {
+    if (age_min)
       lte = new Date(
         today.getFullYear() - Number(age_min),
         today.getMonth(),
         today.getDate(),
       );
-    }
-
     where.birthday = {
       ...(gte && { gte }),
       ...(lte && { lte }),
@@ -121,7 +115,6 @@ export function filterBenefited(dto: FilterBenefitedDto): any {
         },
       });
     }
-
     where.AND = [
       ...(where.AND || []),
       { OR: ranges },
