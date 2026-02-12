@@ -1,7 +1,7 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { Level, Registered } from '@prisma/client';
 import * as xlsx from 'xlsx';
-import { CreateRegisteredDto, UpdateRegisteredDto } from './dto';
+import { CreateRegisteredDto, FilterRegisteredDto, UpdateRegisteredDto } from './dto';
 import { PrismaService } from '../../../../../prisma/prisma.service';
 import {
   paginationHelper,
@@ -29,7 +29,7 @@ export class RegisteredService {
     return this.getRegisteredById(registered.id);
   }
 
-  async findAll(dto: SearchDto): Promise<any> {
+  async findAll(dto: FilterRegisteredDto): Promise<any> {
     const { search, ...pagination } = dto;
     const where: any = { deleted_at: null };
     if (search)
@@ -43,7 +43,12 @@ export class RegisteredService {
       {
         where,
         orderBy: { dni: 'asc' },
-        include: { enumerator: true, urban: true, box: true, declaration: true },
+        include: {
+          enumerator: true,
+          urban: true,
+          box: true,
+          declaration: true,
+        },
       },
       pagination,
     );
@@ -110,7 +115,14 @@ export class RegisteredService {
         enumerator: String(row.enumerator),
         urban: String(row.urban),
         format: row.format,
-        level: row.level === 'P' ? Level.P : row.level === 'PE' ? Level.PE : row.level === 'PU' ? Level.PU : Level.NP,
+        level:
+          row.level === 'P'
+            ? Level.P
+            : row.level === 'PE'
+              ? Level.PE
+              : row.level === 'PU'
+                ? Level.PU
+                : Level.NP,
         registered_at: row.registered_at ? parseDate(row.registered_at) : null,
         created_at: timezoneHelper(),
         updated_at: timezoneHelper(),

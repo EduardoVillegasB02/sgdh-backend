@@ -4,12 +4,11 @@ import {
   IsEnum,
   IsOptional,
   IsString,
-  IsUUID
+  IsUUID,
 } from 'class-validator';
 import { SearchDto } from '../../../../../../common/dto';
 
 export class FilterRegisteredDto extends SearchDto {
-
   @IsOptional()
   @IsEnum(Format)
   format?: Format;
@@ -20,19 +19,19 @@ export class FilterRegisteredDto extends SearchDto {
 
   @IsOptional()
   @IsUUID()
-  box_id? : string;
+  box_id?: string;
 
   @IsOptional()
   @IsUUID()
-  declaration_id? : string;
+  declaration_id?: string;
 
   @IsOptional()
   @IsUUID()
-  enumerator_id? : string;
+  enumerator_id?: string;
 
   @IsOptional()
   @IsUUID()
-  urban_id? : string;
+  urban_id?: string;
 
   @IsOptional()
   @IsString()

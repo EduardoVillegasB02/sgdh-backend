@@ -90,7 +90,10 @@ export class EthnicService {
     return { success: true };
   }
 
-  private async getEthnicById(id: string, toogle: boolean = false): Promise<any> {
+  private async getEthnicById(
+    id: string,
+    toogle: boolean = false,
+  ): Promise<any> {
     const ethnic = await this.prisma.ethnic.findUnique({
       where: { id },
     });

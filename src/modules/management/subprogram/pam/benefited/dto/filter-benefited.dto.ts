@@ -1,0 +1,91 @@
+import {
+  Civil,
+  Doctype,
+  Health,
+  Level,
+  Living,
+  Mode,
+  Sex,
+} from '@prisma/client';
+import { IsEnum, IsOptional, IsUUID } from 'class-validator';
+import { SearchDto } from '../../../../../../common/dto';
+
+export class FilterBenefitedDto extends SearchDto {
+  @IsOptional()
+  @IsUUID()
+  country?: string;
+
+  @IsOptional()
+  @IsUUID()
+  depa_birth?: string;
+
+  @IsOptional()
+  @IsUUID()
+  depa_live?: string;
+
+  @IsOptional()
+  @IsUUID()
+  district?: string;
+
+  @IsOptional()
+  @IsUUID()
+  education?: string;
+
+  @IsOptional()
+  @IsUUID()
+  ethnic?: string;
+
+  @IsOptional()
+  @IsUUID()
+  housing?: string;
+
+  @IsOptional()
+  @IsUUID()
+  lang_learned?: string;
+
+  @IsOptional()
+  @IsUUID()
+  lang_native?: string;
+
+  @IsOptional()
+  @IsUUID()
+  prov_birth?: string;
+
+  @IsOptional()
+  @IsUUID()
+  prov_live?: string;
+
+  @IsOptional()
+  @IsEnum(Civil)
+  civil?: Civil;
+
+  @IsOptional()
+  @IsEnum(Doctype)
+  doc_type?: Doctype;
+
+  @IsOptional()
+  @IsEnum(Health)
+  health?: Health;
+
+  @IsOptional()
+  @IsEnum(Level)
+  pov_level?: Level;
+
+  @IsOptional()
+  @IsEnum(Living)
+  house_status?: Living;
+
+  @IsOptional()
+  @IsEnum(Mode)
+  mode?: Mode;
+
+  @IsOptional()
+  @IsEnum(Sex)
+  sex?: Sex;
+
+  @IsOptional()
+  month?: string;
+
+  @IsOptional()
+  birthday?: string;
+}

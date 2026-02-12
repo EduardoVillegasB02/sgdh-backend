@@ -32,6 +32,9 @@ import { CountryModule } from './modules/management/subprogram/pam/country/count
 import { DepartmentModule } from './modules/management/subprogram/pam/department/department.module';
 import { DistrictModule } from './modules/management/subprogram/pam/district/district.module';
 import { ProvinceModule } from './modules/management/subprogram/pam/province/province.module';
+import { GeneralModule } from './modules/management/general/general.module';
+import { BenefitedModule } from './modules/management/subprogram/pam/benefited/benefited.module';
+import { DisabledModule } from './modules/management/subprogram/omaped/disabled/disabled.module';
 
 @Module({
   imports: [
@@ -68,6 +71,9 @@ import { ProvinceModule } from './modules/management/subprogram/pam/province/pro
     DepartmentModule,
     DistrictModule,
     ProvinceModule,
+    GeneralModule,
+    BenefitedModule,
+    DisabledModule,
   ],
   controllers: [AppController],
   providers: [AppService],

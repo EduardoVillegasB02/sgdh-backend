@@ -7,7 +7,7 @@ datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
   directUrl = env("DIRECT_URL")
-  schemas  = ["initial", "pam", "pca", "pvl", "ule"]
+  schemas  = ["initial", "pam", "pca", "pvl", "omaped", "ule"]
 }
 
 // >> SCHEMA: initial
@@ -42,6 +42,14 @@ enum Resource {
   INCIDENCE
   USER
   REPORT
+  @@schema("initial")
+}
+
+enum Send {
+  ANSWERED
+  FAILED
+  PENDING
+  SENT
   @@schema("initial")
 }
 
@@ -104,6 +112,41 @@ model Audit {
   @@schema("initial")
 }
 
+model General {
+  id                            String                          @id @default(uuid())
+  name                          String
+  lastname                      String
+  dni                           String?                         @unique
+  phone                         String?
+  birthday                      DateTime?
+  message                       String?
+  answer                        String?
+  citizen_id                    String
+  module_id                     String
+  created_at                    DateTime                        @default(now())
+  updated_at                    DateTime                        @updatedAt
+  deleted_at                    DateTime?
+  send                          Send?
+  module                        Module                          @relation(fields: [module_id], references: [id])
+  @@map("general")
+  @@schema("initial")
+}
+
+model Module {
+  id                            String                          @id @default(uuid())
+  name                          String                          @unique
+  program_id                    String
+  created_at                    DateTime                        @default(now())
+  deleted_at                    DateTime?
+  program                       Program                         @relation(fields: [program_id], references: [id])
+  assignments                   Assignment[]
+  general                       General[]
+  @@index([program_id])
+  @@unique([name, program_id])
+  @@map("module")
+  @@schema("initial")
+}
+
 model Permission {
   id                            String                          @id @default(uuid())
   created_at                    DateTime                        @default(now())
@@ -124,20 +167,6 @@ model Program {
   assignments                   Assignment[]
   modules                       Module[]
   @@map("program")
-  @@schema("initial")
-}
-
-model Module {
-  id                            String                          @id @default(uuid())
-  name                          String                          @unique
-  program_id                    String
-  created_at                    DateTime                        @default(now())
-  deleted_at                    DateTime?
-  program                       Program                         @relation(fields: [program_id], references: [id])
-  assignments                   Assignment[]
-  @@index([program_id])
-  @@unique([name, program_id])
-  @@map("module")
   @@schema("initial")
 }
 
@@ -258,7 +287,7 @@ model Benefited {
   occupation_type               String?
   occupation_other              String?
   monthly_income                Float?
-  other_income                  Boolean?
+  other_income                  String?
   income_source                 String?
   income_amount                 Float?
   health_problem                Boolean?
@@ -287,9 +316,9 @@ model Benefited {
   country_id                    String
   department_birth_id           String?
   department_live_id            String?
-  education_id                  String
+  education_id                  String?
   ethnic_id                     String?
-  housing_id                    String
+  housing_id                    String?
   language_learned_id           String?
   language_native_id            String?
   district_live_id              String?
@@ -306,7 +335,7 @@ model Benefited {
   department_birth              Department?                     @relation("DepartmentBirth",fields: [department_birth_id], references: [id])
   department_live               Department?                     @relation("DepartmentLive",fields: [department_live_id], references: [id])
   district_live                 District?                       @relation(fields: [district_live_id], references: [id])
-  education                     Education                       @relation(fields: [education_id], references: [id])
+  education                     Education?                      @relation(fields: [education_id], references: [id])
   ethnic                        Ethnic?                         @relation(fields: [ethnic_id], references: [id])
   housing                       Housing?                        @relation(fields: [housing_id], references: [id])
   language_learned              Language?                       @relation("LanguageLearned", fields: [language_learned_id], references: [id])
@@ -562,6 +591,61 @@ model Town {
   comittees                     Committee[]
   @@map("town")
   @@schema("pvl")
+}
+
+// >> SCHEMA: OMAPED
+enum Degree {
+  MILD
+  MODERATE
+  PROCESS
+  OTHER
+  SEVERE
+  @@schema("omaped")
+}
+
+model Disabled {
+  id                            String                          @id @default(uuid())
+  name                          String
+  lastname                      String
+  doc_num                       String?
+  phone                         String?
+  address                       String?
+  certificate                   String?
+  diagnostic1                   String?
+  diagnostic2                   String?
+  folio                         String?
+  atention                      String?
+  cert_disc                     String?
+  beca                          String?
+  job_placement                 Boolean                         @default(false)
+  entrepreneurship              String?
+  therapy                       String?
+  therapy_schedule              String?
+  reniec                        String?
+  reniec_shift                  String?
+  fair                          String?
+  conadis                       String?
+  conadis_date                  String?
+  conadis_procedure             String?
+  conadis_validity              String?
+  unnamed                       String?
+  contigo                       String?
+  pc1000                        String?
+  fad                           String?
+  census_taker                  String?
+  state                         String?
+  commune                       String?
+  wheelchair                    String?
+  birthday                      DateTime?
+  registered_at                 DateTime?
+  change_at                     DateTime?
+  created_at                    DateTime                        @default(now())
+  updated_at                    DateTime                        @updatedAt
+  deleted_at                    DateTime?
+  degree                        Degree?
+  doc_type                      Doctype?
+  @@map("disabled")
+  @@schema("omaped")
 }
 
 // >> SCHEME: ULE
