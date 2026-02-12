@@ -19,7 +19,6 @@ import {
   UpdateRegisteredDto,
 } from './dto';
 import { SuccessMessage } from '../../../../../common/decorators';
-import { SearchDto } from '../../../../../common/dto';
 
 @Controller('ule/registered')
 export class RegisteredController {

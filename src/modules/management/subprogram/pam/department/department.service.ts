@@ -81,7 +81,7 @@ export class DepartmentService {
     const data = rows.map((row: any) => {
       return {
         name: String(row.name),
-        country: String(row.country),
+        country: row.country_id,
         created_at: timezoneHelper(),
         updated_at: timezoneHelper(),
       };
@@ -89,7 +89,7 @@ export class DepartmentService {
     const result: any = [];
     for (const d of data) {
       const countryd = await this.prisma.country.findFirst({
-        where: { name: d.country },
+        where: { id: String(d.country) },
       });
       if (!countryd)
         throw new BadRequestException(`No existe registro para ${d.country}`);
