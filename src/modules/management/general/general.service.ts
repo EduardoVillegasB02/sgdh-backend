@@ -13,16 +13,24 @@ export class GeneralService {
   constructor(private readonly prisma: PrismaService) {}
 
   async findAll(dto: FilterGeneralDto): Promise<any> {
-      const { where, pagination } = filterGeneral(dto);
-      return paginationHelper(
-        this.prisma.general,
-        {
-          where,
-          orderBy: { name: 'asc' },
+    const { where, pagination } = filterGeneral(dto);
+
+    return paginationHelper(
+      this.prisma.general,
+      {
+        where,
+        orderBy: { name: 'asc' },
+        include: {
+          module: {
+            select: {
+              name: true,
+            },
+          },
         },
-        pagination,
-      );
-    }
+      },
+      pagination,
+    );
+  }
 
   async getForMessage() {
     const today = timezoneHelper();
