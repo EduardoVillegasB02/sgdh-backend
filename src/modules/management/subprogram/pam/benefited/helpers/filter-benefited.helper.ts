@@ -79,9 +79,9 @@ export function filterBenefited(dto: FilterBenefitedDto): any {
   }
 
   if (age_min || age_max) {
-    let gte: any
-    let lte: any
-    if (age_max) 
+    let gte: any;
+    let lte: any;
+    if (age_max)
       gte = new Date(
         today.getFullYear() - Number(age_max) - 1,
         today.getMonth(),
@@ -115,10 +115,7 @@ export function filterBenefited(dto: FilterBenefitedDto): any {
         },
       });
     }
-    where.AND = [
-      ...(where.AND || []),
-      { OR: ranges },
-    ];
+    where.AND = [...(where.AND || []), { OR: ranges }];
   }
   if (month) {
     const m = Number(month);
@@ -130,10 +127,7 @@ export function filterBenefited(dto: FilterBenefitedDto): any {
           lt: new Date(Date.UTC(year, m, 1)),
         },
       });
-    where.AND = [
-      ...(where.AND || []),
-      { OR: ranges },
-    ];
+    where.AND = [...(where.AND || []), { OR: ranges }];
   }
   return {
     where,

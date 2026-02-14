@@ -106,10 +106,7 @@ export function filterRegistered(dto: FilterRegisteredDto): any {
         },
       });
     }
-    where.AND = [
-      ...(where.AND || []),
-      { OR: ranges },
-    ];
+    where.AND = [...(where.AND || []), { OR: ranges }];
   }
   if (birthday_month) {
     const m = Number(birthday_month);
@@ -121,10 +118,7 @@ export function filterRegistered(dto: FilterRegisteredDto): any {
           lt: new Date(Date.UTC(year, m, 1)),
         },
       });
-    where.AND = [
-      ...(where.AND || []),
-      { OR: ranges },
-    ];
+    where.AND = [...(where.AND || []), { OR: ranges }];
   }
   return {
     where,

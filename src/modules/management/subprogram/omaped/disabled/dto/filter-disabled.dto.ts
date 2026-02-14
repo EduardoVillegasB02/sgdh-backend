@@ -20,6 +20,5 @@ export class FilterDisabledDto extends SearchDto {
   month?: string;
 
   @IsOptional()
-  @IsDateString()
   birthday?: string;
 }

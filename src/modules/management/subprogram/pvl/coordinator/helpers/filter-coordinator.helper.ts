@@ -1,19 +1,8 @@
-import { FilterGeneralDto } from '../dto';
+import { FilterCoordinatorDto } from '../dto';
 
-export function filterGeneral(dto: FilterGeneralDto): any {
-  const {
-    search,
-    module_name,
-    birthday,
-    month,
-    age,
-    age_min,
-    age_max,
-    ...pagination
-  } = dto;
-
+export function filterCoordinator(dto: FilterCoordinatorDto): any {
+  const { search, age, age_min, age_max, birthday, month, ...pagination } = dto;
   const where: any = { deleted_at: null };
-
   if (search) {
     where.OR = [
       { name: { contains: search, mode: 'insensitive' } },
@@ -22,14 +11,6 @@ export function filterGeneral(dto: FilterGeneralDto): any {
     ];
   }
 
-  if (module_name) {
-    where.module = {
-      name: {
-        contains: module_name,
-        mode: 'insensitive',
-      },
-    };
-  }
   const today = new Date();
 
   if (age) {
@@ -38,19 +19,16 @@ export function filterGeneral(dto: FilterGeneralDto): any {
       today.getMonth(),
       today.getDate() + 1,
     );
-
     const minDate = new Date(
       today.getFullYear() - Number(age) - 1,
       today.getMonth(),
       today.getDate() + 1,
     );
-
     where.birthday = {
       gte: minDate,
       lt: maxDate,
     };
   }
-
   if (age_min || age_max) {
     let gte: any;
     let lte: any;
@@ -71,15 +49,11 @@ export function filterGeneral(dto: FilterGeneralDto): any {
       ...(lte && { lte }),
     };
   }
-
   if (birthday) {
     const [monthStr, dayStr] = birthday.split('-');
-
     const m = Number(monthStr) - 1;
     const d = Number(dayStr);
-
     const ranges: any[] = [];
-
     for (let year = 1900; year <= 2100; year++) {
       ranges.push({
         birthday: {

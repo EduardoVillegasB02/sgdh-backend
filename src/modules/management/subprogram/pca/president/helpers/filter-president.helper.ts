@@ -1,10 +1,10 @@
-import { FilterGeneralDto } from '../dto';
+import { FilterPresidentDto } from '../dto';
 
-export function filterGeneral(dto: FilterGeneralDto): any {
+export function filterPresident(dto: FilterPresidentDto): any {
   const {
     search,
-    module_name,
     birthday,
+    modality,
     month,
     age,
     age_min,
@@ -14,22 +14,13 @@ export function filterGeneral(dto: FilterGeneralDto): any {
 
   const where: any = { deleted_at: null };
 
-  if (search) {
+  if (search)
     where.OR = [
+      { doc_num: { contains: search, mode: 'insensitive' } },
       { name: { contains: search, mode: 'insensitive' } },
       { lastname: { contains: search, mode: 'insensitive' } },
-      { dni: { contains: search, mode: 'insensitive' } },
     ];
-  }
 
-  if (module_name) {
-    where.module = {
-      name: {
-        contains: module_name,
-        mode: 'insensitive',
-      },
-    };
-  }
   const today = new Date();
 
   if (age) {
@@ -101,6 +92,13 @@ export function filterGeneral(dto: FilterGeneralDto): any {
         },
       });
     where.AND = [...(where.AND || []), { OR: ranges }];
+  }
+  if (modality) {
+    where.centers = {
+      some: {
+        modality: modality,
+      },
+    };
   }
   return {
     where,

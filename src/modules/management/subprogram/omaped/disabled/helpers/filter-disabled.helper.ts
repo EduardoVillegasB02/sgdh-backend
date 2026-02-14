@@ -21,6 +21,7 @@ export function filterDisabled(dto: FilterDisabledDto): any {
   }
   if (degree) where.degree = degree;
   const today = new Date();
+
   if (age) {
     const maxDate = new Date(
       today.getFullYear() - Number(age),
@@ -62,13 +63,14 @@ export function filterDisabled(dto: FilterDisabledDto): any {
     const m = Number(monthStr) - 1;
     const d = Number(dayStr);
     const ranges: any[] = [];
-    for (let year = 1900; year <= 2100; year++)
+    for (let year = 1900; year <= 2100; year++) {
       ranges.push({
         birthday: {
           gte: new Date(Date.UTC(year, m, d, 0, 0, 0)),
           lte: new Date(Date.UTC(year, m, d, 23, 59, 59)),
         },
       });
+    }
     where.AND = [...(where.AND || []), { OR: ranges }];
   }
   if (month) {

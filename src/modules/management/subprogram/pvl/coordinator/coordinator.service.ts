@@ -1,13 +1,18 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { Coordinator } from '@prisma/client';
 import * as xlsx from 'xlsx';
-import { CreateCoordinatorDto, UpdateCoordinatorDto } from './dto';
+import {
+  CreateCoordinatorDto,
+  FilterCoordinatorDto,
+  UpdateCoordinatorDto,
+} from './dto';
 import { PrismaService } from '../../../../../prisma/prisma.service';
 import {
   paginationHelper,
   timezoneHelper,
 } from '../../../../../common/helpers';
 import { SearchDto } from '../../../../../common/dto';
+import { filterCoordinator } from './helpers';
 
 @Injectable()
 export class CoordinatorService {
@@ -24,15 +29,9 @@ export class CoordinatorService {
     return await this.getCoordinatorById(coordinator.id);
   }
 
-  async findAll(dto: SearchDto): Promise<any> {
-    const { search, ...pagination } = dto;
-    const where: any = { deleted_at: null };
-    if (search)
-      where.OR = [
-        { name: { contains: search, mode: 'insensitive' } },
-        { lastname: { contains: search, mode: 'insensitive' } },
-        { dni: { contains: search, mode: 'insensitive' } },
-      ];
+  async findAll(dto: FilterCoordinatorDto): Promise<any> {
+    const { where, pagination } = filterCoordinator(dto);
+
     return paginationHelper(
       this.prisma.coordinator,
       {

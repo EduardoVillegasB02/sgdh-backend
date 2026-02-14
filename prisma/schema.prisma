@@ -1,22 +1,654 @@
 generator client {
-  provider = "prisma-client-js"
+  provider        = "prisma-client-js"
   previewFeatures = ["multiSchema"]
 }
 
 datasource db {
-  provider = "postgresql"
-  url      = env("DATABASE_URL")
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
   directUrl = env("DIRECT_URL")
-  schemas  = ["initial", "pam", "pca", "pvl", "omaped", "ule"]
+  schemas   = ["initial", "omaped", "pam", "pca", "pvl", "ule"]
 }
 
-// >> SCHEMA: initial
+model Access {
+  id            String     @id @default(uuid())
+  permission_id String
+  role_id       String
+  created_at    DateTime   @default(now())
+  deleted_at    DateTime?
+  permission    Permission @relation(fields: [permission_id], references: [id])
+  role          Role       @relation(fields: [role_id], references: [id])
+
+  @@unique([permission_id, role_id])
+  @@map("access")
+  @@schema("initial")
+}
+
+model Assignment {
+  id         String    @id @default(uuid())
+  module_id  String?
+  program_id String
+  role_id    String
+  user_id    String
+  created_at DateTime  @default(now())
+  deleted_at DateTime?
+  module     Module?   @relation(fields: [module_id], references: [id])
+  program    Program   @relation(fields: [program_id], references: [id])
+  role       Role      @relation(fields: [role_id], references: [id])
+  user       User      @relation(fields: [user_id], references: [id])
+
+  @@unique([module_id, program_id, role_id, user_id])
+  @@map("assignment")
+  @@schema("initial")
+}
+
+model Audit {
+  id              String    @id @default(uuid())
+  description     String
+  register_id     String?
+  field           String?
+  preview_content String?
+  new_content     String?
+  user_id         String?
+  created_at      DateTime  @default(now())
+  deleted_at      DateTime?
+  action          Action
+  model           Model
+  status          Status    @default(SUCCESS)
+  user            User?     @relation(fields: [user_id], references: [id])
+
+  @@index([action])
+  @@index([model])
+  @@index([status])
+  @@index([user_id])
+  @@map("audit")
+  @@schema("initial")
+}
+
+model General {
+  id         String    @id @default(uuid())
+  name       String
+  lastname   String
+  dni        String?   @unique
+  phone      String?
+  birthday   DateTime?
+  message    String?
+  answer     String?
+  citizen_id String
+  module_id  String
+  created_at DateTime  @default(now())
+  updated_at DateTime  @updatedAt
+  deleted_at DateTime?
+  send       Send?
+  module     Module    @relation(fields: [module_id], references: [id])
+
+  @@map("general")
+  @@schema("initial")
+}
+
+model Module {
+  id          String       @id @default(uuid())
+  name        String       @unique
+  program_id  String
+  created_at  DateTime     @default(now())
+  deleted_at  DateTime?
+  assignments Assignment[]
+  general     General[]
+  program     Program      @relation(fields: [program_id], references: [id])
+
+  @@unique([name, program_id])
+  @@index([program_id])
+  @@map("module")
+  @@schema("initial")
+}
+
+model Permission {
+  id         String    @id @default(uuid())
+  created_at DateTime  @default(now())
+  deleted_at DateTime?
+  action     Ability
+  resource   Resource
+  accesses   Access[]
+
+  @@unique([action, resource])
+  @@map("permission")
+  @@schema("initial")
+}
+
+model Program {
+  id          String       @id @default(uuid())
+  name        String       @unique
+  created_at  DateTime     @default(now())
+  deleted_at  DateTime?
+  assignments Assignment[]
+  modules     Module[]
+
+  @@map("program")
+  @@schema("initial")
+}
+
+model Role {
+  id          String       @id @default(uuid())
+  name        String       @unique
+  is_super    Boolean      @default(false)
+  created_at  DateTime     @default(now())
+  deleted_at  DateTime?
+  accesses    Access[]
+  assignments Assignment[]
+
+  @@map("role")
+  @@schema("initial")
+}
+
+model User {
+  id          String       @id @default(uuid())
+  username    String       @unique
+  password    String
+  name        String
+  lastname    String
+  email       String       @unique
+  dni         String?      @unique
+  phone       String?      @unique
+  created_at  DateTime     @default(now())
+  updated_at  DateTime     @updatedAt
+  deleted_at  DateTime?
+  assignments Assignment[]
+  audits      Audit[]
+
+  @@map("user")
+  @@schema("initial")
+}
+
+model Benefited {
+  id                       String        @id @default(uuid())
+  doc_num                  String
+  name                     String
+  lastname                 String
+  children                 Int           @default(0)
+  address                  String
+  cellphone                String?
+  telephone                String?
+  assessment_cognitive     Int           @default(0)
+  assessment_emotional     Int           @default(0)
+  assessment_functional    Int           @default(0)
+  assessment_sociofamily   Int           @default(0)
+  read_write               Boolean       @default(true)
+  profession               String?
+  housing_onservation      String?
+  state_services           Boolean?
+  pension_65               Boolean?
+  onp                      Boolean?
+  police_pension           Boolean?
+  other_pension            String?
+  sisfoh                   Boolean?
+  works                    Boolean?
+  occupation_type          String?
+  occupation_other         String?
+  monthly_income           Float?
+  other_income             String?
+  income_source            String?
+  income_amount            Float?
+  health_problem           Boolean?
+  health_condition         String?
+  treatment                Boolean?
+  conadis                  Boolean?
+  disability_vision        Dificulty?
+  disability_hearing       Dificulty?
+  disability_walking       Dificulty?
+  disability_memory        Dificulty?
+  disability_selfcare      Dificulty?
+  disability_communication Dificulty?
+  violence_by              Violenceby?
+  violence_type            Violencetype?
+  abused                   Boolean?
+  abuse_type               String?
+  registration_reason      String?
+  registration_reason_old  String?
+  expected_services        String?
+  birthday                 DateTime?
+  registered_at            DateTime
+  enrollmented_at          DateTime?
+  created_at               DateTime      @default(now())
+  updated_at               DateTime      @updatedAt
+  deleted_at               DateTime?
+  country_id               String
+  department_birth_id      String?
+  department_live_id       String?
+  education_id             String?
+  ethnic_id                String?
+  housing_id               String?
+  language_learned_id      String?
+  language_native_id       String?
+  district_live_id         String?
+  province_birth_id        String?
+  province_live_id         String?
+  civil                    Civil
+  doc_type                 Doctype       @default(DNI)
+  health                   Health?
+  poverty_level            Level?
+  housing_status           Living        @default(OTHER)
+  mode                     Mode          @default(HIGH)
+  sex                      Sex
+  country                  Country       @relation(fields: [country_id], references: [id])
+  department_birth         Department?   @relation("DepartmentBirth", fields: [department_birth_id], references: [id])
+  department_live          Department?   @relation("DepartmentLive", fields: [department_live_id], references: [id])
+  district_live            District?     @relation(fields: [district_live_id], references: [id])
+  education                Education?    @relation(fields: [education_id], references: [id])
+  ethnic                   Ethnic?       @relation(fields: [ethnic_id], references: [id])
+  housing                  Housing?      @relation(fields: [housing_id], references: [id])
+  language_learned         Language?     @relation("LanguageLearned", fields: [language_learned_id], references: [id])
+  language_native          Language?     @relation("LanguageNative", fields: [language_native_id], references: [id])
+  province_birth           Province?     @relation("ProvinceBirth", fields: [province_birth_id], references: [id])
+  province_live            Province?     @relation("ProvinceLive", fields: [province_live_id], references: [id])
+
+  @@map("benefited")
+  @@schema("pam")
+}
+
+model Country {
+  id          String       @id @default(uuid())
+  name        String
+  created_at  DateTime     @default(now())
+  updated_at  DateTime     @updatedAt
+  deleted_at  DateTime?
+  benefited   Benefited[]
+  departments Department[]
+  districts   District[]
+  provinces   Province[]
+
+  @@map("country")
+  @@schema("pam")
+}
+
+model Department {
+  id              String      @id @default(uuid())
+  name            String
+  country_id      String
+  created_at      DateTime    @default(now())
+  updated_at      DateTime    @updatedAt
+  deleted_at      DateTime?
+  benefited_birth Benefited[] @relation("DepartmentBirth")
+  benefited_live  Benefited[] @relation("DepartmentLive")
+  country         Country     @relation(fields: [country_id], references: [id])
+  districts       District[]
+  provinces       Province[]
+
+  @@map("department")
+  @@schema("pam")
+}
+
+model District {
+  id            String      @id @default(uuid())
+  name          String
+  country_id    String
+  department_id String
+  province_id   String
+  created_at    DateTime    @default(now())
+  updated_at    DateTime    @updatedAt
+  deleted_at    DateTime?
+  benefited     Benefited[]
+  country       Country     @relation(fields: [country_id], references: [id])
+  department    Department  @relation(fields: [department_id], references: [id])
+  province      Province    @relation(fields: [province_id], references: [id])
+
+  @@map("district")
+  @@schema("pam")
+}
+
+model Education {
+  id         String      @id @default(uuid())
+  name       String
+  created_at DateTime    @default(now())
+  updated_at DateTime    @updatedAt
+  deleted_at DateTime?
+  benefited  Benefited[]
+
+  @@map("education")
+  @@schema("pam")
+}
+
+model Ethnic {
+  id         String      @id @default(uuid())
+  name       String
+  created_at DateTime    @default(now())
+  updated_at DateTime    @updatedAt
+  deleted_at DateTime?
+  benefited  Benefited[]
+
+  @@map("ethnic")
+  @@schema("pam")
+}
+
+model Housing {
+  id         String      @id @default(uuid())
+  name       String
+  created_at DateTime    @default(now())
+  updated_at DateTime    @updatedAt
+  deleted_at DateTime?
+  benefited  Benefited[]
+
+  @@map("housing")
+  @@schema("pam")
+}
+
+model Language {
+  id                String      @id @default(uuid())
+  name              String
+  created_at        DateTime    @default(now())
+  updated_at        DateTime    @updatedAt
+  deleted_at        DateTime?
+  benefited_learned Benefited[] @relation("LanguageLearned")
+  benefited_native  Benefited[] @relation("LanguageNative")
+
+  @@map("language")
+  @@schema("pam")
+}
+
+model Province {
+  id              String      @id @default(uuid())
+  name            String
+  country_id      String
+  department_id   String
+  created_at      DateTime    @default(now())
+  updated_at      DateTime    @updatedAt
+  deleted_at      DateTime?
+  benefited_birth Benefited[] @relation("ProvinceBirth")
+  benefited_live  Benefited[] @relation("ProvinceLive")
+  districts       District[]
+  country         Country     @relation(fields: [country_id], references: [id])
+  department      Department  @relation(fields: [department_id], references: [id])
+
+  @@map("province")
+  @@schema("pam")
+}
+
+model Center {
+  id             String      @id @default(uuid())
+  code           String      @unique
+  name           String
+  address        String?
+  members_male   Int         @default(0)
+  members_female Int         @default(0)
+  latitude       Float
+  longitude      Float
+  created_at     DateTime    @default(now())
+  updated_at     DateTime    @updatedAt
+  deleted_at     DateTime?
+  president_id   String?
+  directive_id   String?
+  members        Int         @default(0)
+  situation      String?
+  modality       Modality
+  directive      Directive?  @relation(fields: [directive_id], references: [id])
+  president      President?  @relation(fields: [president_id], references: [id])
+  recipient      recipient[]
+
+  @@map("center")
+  @@schema("pca")
+}
+
+model President {
+  id         String    @id @default(uuid())
+  name       String
+  lastname   String
+  dni        String?
+  phone      String?
+  birthday   DateTime? @db.Timestamp(6)
+  created_at DateTime  @default(now())
+  updated_at DateTime  @updatedAt
+  deleted_at DateTime?
+  sex        Sex
+  centers    Center[]
+
+  @@map("president")
+  @@schema("pca")
+}
+
+model Directive {
+  id         String    @id @default(uuid())
+  start_at   DateTime?
+  end_at     DateTime?
+  created_at DateTime  @default(now())
+  updated_at DateTime  @updatedAt
+  deleted_at DateTime?
+  resolution String
+  centers    Center[]
+
+  @@map("directive")
+  @@schema("pca")
+}
+
+model Committee {
+  id                    String      @id @default(uuid())
+  code                  String      @unique
+  name                  String
+  address               String?
+  latitude              Float
+  longitude             Float
+  beneficiaries         Int         @default(0)
+  beneficiaries_foreign Int         @default(0)
+  members               Int         @default(0)
+  handicappeds          Int         @default(0)
+  commune               String?
+  observation           String?
+  coordinator_id        String
+  couple_id             String
+  town_id               String
+  route                 Route
+  created_at            DateTime    @default(now())
+  updated_at            DateTime    @updatedAt
+  deleted_at            DateTime?
+  coordinator           Coordinator @relation(fields: [coordinator_id], references: [id])
+  couple                Couple      @relation(fields: [couple_id], references: [id])
+  town                  Town        @relation(fields: [town_id], references: [id])
+
+  @@map("committee")
+  @@schema("pvl")
+}
+
+model Coordinator {
+  id         String      @id @default(uuid())
+  name       String
+  lastname   String
+  dni        String?
+  phone      String?
+  birthday   DateTime?
+  created_at DateTime    @default(now())
+  updated_at DateTime    @updatedAt
+  deleted_at DateTime?
+  comittees  Committee[]
+
+  @@map("coordinator")
+  @@schema("pvl")
+}
+
+model Couple {
+  id         String      @id @default(uuid())
+  name       String      @unique
+  created_at DateTime    @default(now())
+  updated_at DateTime    @updatedAt
+  deleted_at DateTime?
+  comittees  Committee[]
+
+  @@map("couple")
+  @@schema("pvl")
+}
+
+model Town {
+  id         String      @id @default(uuid())
+  name       String      @unique
+  created_at DateTime    @default(now())
+  updated_at DateTime    @updatedAt
+  deleted_at DateTime?
+  comittees  Committee[]
+
+  @@map("town")
+  @@schema("pvl")
+}
+
+model Disabled {
+  id                String    @id @default(uuid())
+  name              String
+  lastname          String
+  doc_num           String?
+  phone             String?
+  address           String?
+  certificate       String?
+  diagnostic1       String?
+  diagnostic2       String?
+  folio             String?
+  atention          String?
+  cert_disc         String?
+  beca              String?
+  job_placement     Boolean   @default(false)
+  entrepreneurship  String?
+  therapy           String?
+  therapy_schedule  String?
+  reniec            String?
+  reniec_shift      String?
+  fair              String?
+  conadis           String?
+  conadis_date      String?
+  conadis_procedure String?
+  conadis_validity  String?
+  unnamed           String?
+  contigo           String?
+  pc1000            String?
+  fad               String?
+  census_taker      String?
+  state             String?
+  commune           String?
+  wheelchair        String?
+  birthday          DateTime?
+  registered_at     DateTime?
+  change_at         DateTime?
+  created_at        DateTime  @default(now())
+  updated_at        DateTime  @updatedAt
+  deleted_at        DateTime?
+  degree            Degree?
+  doc_type          Doctype?
+
+  @@map("disabled")
+  @@schema("omaped")
+}
+
+model Box {
+  id         String       @id @default(uuid())
+  code_num   Int          @default(0)
+  created_at DateTime     @default(now())
+  updated_at DateTime     @updatedAt
+  deleted_at DateTime?
+  registered Registered[]
+
+  @@map("box")
+  @@schema("ule")
+}
+
+model Declaration {
+  id         String       @id @default(uuid())
+  code       String
+  created_at DateTime     @default(now())
+  updated_at DateTime     @updatedAt
+  deleted_at DateTime?
+  registered Registered[]
+
+  @@map("declaration")
+  @@schema("ule")
+}
+
+model Enumerator {
+  id         String       @id @default(uuid())
+  dni        String       @unique
+  name       String
+  lastname   String
+  created_at DateTime     @default(now())
+  deleted_at DateTime?
+  updated_at DateTime     @updatedAt
+  birthday   DateTime?
+  phone      String?
+  registered Registered[]
+
+  @@map("enumerator")
+  @@schema("ule")
+}
+
+model Registered {
+  id             String      @id @default(uuid())
+  fsu            String      @unique
+  s100           String      @unique
+  dni            String
+  name           String
+  lastname       String
+  phone          String?
+  latitude       Float?
+  longitude      Float?
+  members        Int         @default(1)
+  registered_at  DateTime
+  created_at     DateTime    @default(now())
+  updated_at     DateTime    @updatedAt
+  deleted_at     DateTime?
+  box_id         String
+  declaration_id String
+  enumerator_id  String
+  urban_id       String
+  format         Format
+  level          Level
+  birthday       DateTime?
+  box            Box         @relation(fields: [box_id], references: [id])
+  declaration    Declaration @relation(fields: [declaration_id], references: [id])
+  enumerator     Enumerator  @relation(fields: [enumerator_id], references: [id])
+  urban          Urban       @relation(fields: [urban_id], references: [id])
+
+  @@map("registered")
+  @@schema("ule")
+}
+
+model Urban {
+  id         String       @id @default(uuid())
+  name       String       @unique
+  created_at DateTime     @default(now())
+  updated_at DateTime     @updatedAt
+  deleted_at DateTime?
+  registered Registered[]
+
+  @@map("urban")
+  @@schema("ule")
+}
+
+model recipient {
+  id                String    @id
+  doc_num           String
+  lastname          String
+  name              String
+  address           String?
+  phone             String?
+  pregnant          Boolean   @default(false)
+  disabled          Boolean   @default(false)
+  assignee_doc_num  String?
+  assignee_lastname String?
+  assignee_name     String?
+  birthday          DateTime?
+  registered_at     DateTime?
+  created_at        DateTime  @default(now())
+  updated_at        DateTime
+  deleted_at        DateTime?
+  center_id         String?
+  doc_type          Doctype
+  modality          Modality
+  sex               Sex
+  social            Social?
+  center            Center?   @relation(fields: [center_id], references: [id])
+
+  @@schema("pca")
+}
+
 enum Ability {
   CREATE
   READ
   UPDATE
   DELETE
   ASSIGN
+
   @@schema("initial")
 }
 
@@ -29,11 +661,13 @@ enum Action {
   LOGOUT
   RESTORE
   UPDATE
+
   @@schema("initial")
 }
 
 enum Model {
   initial
+
   @@schema("initial")
 }
 
@@ -42,6 +676,7 @@ enum Resource {
   INCIDENCE
   USER
   REPORT
+
   @@schema("initial")
 }
 
@@ -50,6 +685,7 @@ enum Send {
   FAILED
   PENDING
   SENT
+
   @@schema("initial")
 }
 
@@ -57,156 +693,17 @@ enum Status {
   BLOCKED
   FAILED
   SUCCESS
+
   @@schema("initial")
 }
 
-model Access {
-  id                            String                          @id @default(uuid())
-  permission_id                 String
-  role_id                       String
-  created_at                    DateTime                        @default(now())
-  deleted_at                    DateTime?
-  permission                    Permission                      @relation(fields: [permission_id], references: [id])
-  role                          Role                            @relation(fields: [role_id], references: [id])
-  @@unique([permission_id, role_id])
-  @@map("access")
-  @@schema("initial")
-}
-
-model Assignment {
-  id                            String                          @id @default(uuid())
-  module_id                     String?
-  program_id                    String
-  role_id                       String
-  user_id                       String
-  created_at                    DateTime                        @default(now())
-  deleted_at                    DateTime?
-  module                        Module?                         @relation(fields: [module_id], references: [id])
-  program                       Program                         @relation(fields: [program_id], references: [id])
-  role                          Role                            @relation(fields: [role_id], references: [id])
-  user                          User                            @relation(fields: [user_id], references: [id])
-  @@unique([module_id, program_id, role_id, user_id])
-  @@map("assignment")
-  @@schema("initial")
-}
-
-model Audit {
-  id                            String                          @id @default(uuid())
-  description                   String
-  register_id                   String?
-  field                         String?
-  preview_content               String?
-  new_content                   String?
-  user_id                       String?
-  created_at                    DateTime                        @default(now())
-  deleted_at                    DateTime?
-  action                        Action
-  model                         Model
-  status                        Status                          @default(SUCCESS)
-  user                          User?                           @relation(fields: [user_id], references: [id])
-  @@index([action])
-  @@index([model])
-  @@index([status])
-  @@index([user_id])
-  @@map("audit")
-  @@schema("initial")
-}
-
-model General {
-  id                            String                          @id @default(uuid())
-  name                          String
-  lastname                      String
-  dni                           String?                         @unique
-  phone                         String?
-  birthday                      DateTime?
-  message                       String?
-  answer                        String?
-  citizen_id                    String
-  module_id                     String
-  created_at                    DateTime                        @default(now())
-  updated_at                    DateTime                        @updatedAt
-  deleted_at                    DateTime?
-  send                          Send?
-  module                        Module                          @relation(fields: [module_id], references: [id])
-  @@map("general")
-  @@schema("initial")
-}
-
-model Module {
-  id                            String                          @id @default(uuid())
-  name                          String                          @unique
-  program_id                    String
-  created_at                    DateTime                        @default(now())
-  deleted_at                    DateTime?
-  program                       Program                         @relation(fields: [program_id], references: [id])
-  assignments                   Assignment[]
-  general                       General[]
-  @@index([program_id])
-  @@unique([name, program_id])
-  @@map("module")
-  @@schema("initial")
-}
-
-model Permission {
-  id                            String                          @id @default(uuid())
-  created_at                    DateTime                        @default(now())
-  deleted_at                    DateTime?
-  action                        Ability
-  resource                      Resource
-  accesses                      Access[]   
-  @@unique([action, resource])
-  @@map("permission")
-  @@schema("initial")
-}
-
-model Program {
-  id                            String                          @id @default(uuid())
-  name                          String                          @unique
-  created_at                    DateTime                        @default(now())
-  deleted_at                    DateTime?
-  assignments                   Assignment[]
-  modules                       Module[]
-  @@map("program")
-  @@schema("initial")
-}
-
-model Role {
-  id                            String                          @id @default(uuid())
-  name                          String                          @unique
-  is_super                      Boolean                         @default(false)
-  created_at                    DateTime                        @default(now())
-  deleted_at                    DateTime?
-  accesses                      Access[]  
-  assignments                   Assignment[]
-  @@map("role")
-  @@schema("initial")
-}
-
-model User {
-  id                            String                          @id @default(uuid())
-  username                      String                          @unique
-  password                      String
-  name                          String
-  lastname                      String
-  email                         String                          @unique
-  dni                           String?                         @unique
-  phone                         String?                         @unique
-  created_at                    DateTime                        @default(now())
-  updated_at                    DateTime                        @updatedAt
-  deleted_at                    DateTime?
-  assignments                   Assignment[]
-  audits                        Audit[]
-  @@map("user")
-  @@schema("initial")
-}
-
-// >> SCHEMA: PAM
 enum Civil {
   COHABITANT
   DIVORCED
   MARRIED
   SINGLE
   WIDOWED
+
   @@schema("pam")
 }
 
@@ -214,12 +711,14 @@ enum Doctype {
   CE
   DNI
   NOTEBOOK
+
   @@schema("pam")
 }
 
 enum Mode {
   HIGH
   LOW
+
   @@schema("pam")
 }
 
@@ -228,6 +727,7 @@ enum Health {
   POLICE
   PRIVATE
   SIS
+
   @@schema("pam")
 }
 
@@ -236,6 +736,7 @@ enum Living {
   OTHER
   OWN
   RENTED
+
   @@schema("pam")
 }
 
@@ -244,12 +745,14 @@ enum Dificulty {
   GREAT
   NONE
   SOME
+
   @@schema("pam")
 }
 
 enum Violenceby {
   FAMILY
   SOCIETY
+
   @@schema("pam")
 }
 
@@ -258,485 +761,64 @@ enum Violencetype {
   PHYSICAL
   PHYSICALPSYCHO
   PSYCHO
+
   @@schema("pam")
 }
 
-model Benefited {
-  id                            String                          @id @default(uuid())
-  doc_num                       String
-  name                          String
-  lastname                      String
-  children                      Int                             @default(0)
-  address                       String
-  cellphone                     String?
-  telephone                     String?
-  assessment_cognitive          Int                             @default(0)
-  assessment_emotional          Int                             @default(0)
-  assessment_functional         Int                             @default(0)
-  assessment_sociofamily        Int                             @default(0)
-  read_write                    Boolean                         @default(true)
-  profession                    String?
-  housing_onservation           String?
-  state_services                Boolean?
-  pension_65                    Boolean?
-  onp                           Boolean?
-  police_pension                Boolean?
-  other_pension                 String?
-  sisfoh                        Boolean?
-  works                         Boolean?
-  occupation_type               String?
-  occupation_other              String?
-  monthly_income                Float?
-  other_income                  String?
-  income_source                 String?
-  income_amount                 Float?
-  health_problem                Boolean?
-  health_condition              String?
-  treatment                     Boolean?
-  conadis                       Boolean?
-  disability_vision             Dificulty?
-  disability_hearing            Dificulty?
-  disability_walking            Dificulty?
-  disability_memory             Dificulty?
-  disability_selfcare           Dificulty?
-  disability_communication      Dificulty?
-  violence_by                   Violenceby?
-  violence_type                 Violencetype?
-  abused                        Boolean?
-  abuse_type                    String?
-  registration_reason           String?
-  registration_reason_old       String?
-  expected_services             String?
-  birthday                      DateTime?
-  registered_at                 DateTime
-  enrollmented_at               DateTime?
-  created_at                    DateTime                        @default(now())
-  updated_at                    DateTime                        @updatedAt
-  deleted_at                    DateTime?
-  country_id                    String
-  department_birth_id           String?
-  department_live_id            String?
-  education_id                  String?
-  ethnic_id                     String?
-  housing_id                    String?
-  language_learned_id           String?
-  language_native_id            String?
-  district_live_id              String?
-  province_birth_id             String?
-  province_live_id              String?
-  civil                         Civil
-  doc_type                      Doctype                         @default(DNI)
-  health                        Health?
-  poverty_level                 Level?
-  housing_status                Living                          @default(OTHER)
-  mode                          Mode                            @default(HIGH)
-  sex                           Sex
-  country                       Country                         @relation(fields: [country_id], references: [id])
-  department_birth              Department?                     @relation("DepartmentBirth",fields: [department_birth_id], references: [id])
-  department_live               Department?                     @relation("DepartmentLive",fields: [department_live_id], references: [id])
-  district_live                 District?                       @relation(fields: [district_live_id], references: [id])
-  education                     Education?                      @relation(fields: [education_id], references: [id])
-  ethnic                        Ethnic?                         @relation(fields: [ethnic_id], references: [id])
-  housing                       Housing?                        @relation(fields: [housing_id], references: [id])
-  language_learned              Language?                       @relation("LanguageLearned", fields: [language_learned_id], references: [id])
-  language_native               Language?                       @relation("LanguageNative", fields: [language_native_id], references: [id])
-  province_birth                Province?                       @relation("ProvinceBirth", fields: [province_birth_id], references: [id])
-  province_live                 Province?                       @relation("ProvinceLive", fields: [province_live_id], references: [id])
-  @@map("benefited")
-  @@schema("pam")
-}
-
-model Country {
-  id                            String                          @id @default(uuid())
-  name                          String
-  created_at                    DateTime                        @default(now())
-  updated_at                    DateTime                        @updatedAt
-  deleted_at                    DateTime?
-  benefited                     Benefited[]
-  departments                   Department[]
-  districts                     District[]
-  provinces                     Province[]
-  @@map("country")
-  @@schema("pam")
-}
-
-model Department {
-  id                            String                          @id @default(uuid())
-  name                          String
-  country_id                    String
-  created_at                    DateTime                        @default(now())
-  updated_at                    DateTime                        @updatedAt
-  deleted_at                    DateTime?
-  country                       Country                         @relation(fields: [country_id], references: [id])
-  benefited_birth               Benefited[]                     @relation("DepartmentBirth")
-  benefited_live                Benefited[]                     @relation("DepartmentLive")
-  districts                     District[]
-  provinces                     Province[]
-  @@map("department")
-  @@schema("pam")
-}
-
-model District {
-  id                            String                          @id @default(uuid())
-  name                          String
-  country_id                    String
-  department_id                 String
-  province_id                   String
-  created_at                    DateTime                        @default(now())
-  updated_at                    DateTime                        @updatedAt
-  deleted_at                    DateTime?
-  country                       Country                         @relation(fields: [country_id], references: [id])
-  department                    Department                      @relation(fields: [department_id], references: [id])
-  province                      Province                        @relation(fields: [province_id], references: [id])
-  benefited                     Benefited[]
-  @@map("district")
-  @@schema("pam")
-}
-
-model Education {
-  id                            String                          @id @default(uuid())
-  name                          String
-  created_at                    DateTime                        @default(now())
-  updated_at                    DateTime                        @updatedAt
-  benefited                     Benefited[]
-  deleted_at                    DateTime?
-  @@map("education")
-  @@schema("pam")
-}
-
-model Ethnic {
-  id                            String                          @id @default(uuid())
-  name                          String
-  created_at                    DateTime                        @default(now())
-  updated_at                    DateTime                        @updatedAt
-  benefited                     Benefited[]
-  deleted_at                    DateTime?
-  @@map("ethnic")
-  @@schema("pam")
-}
-
-model Housing {
-  id                            String                          @id @default(uuid())
-  name                          String
-  created_at                    DateTime                        @default(now())
-  updated_at                    DateTime                        @updatedAt
-  benefited                     Benefited[]
-  deleted_at                    DateTime?
-  @@map("housing")
-  @@schema("pam")
-}
-
-model Language {
-  id                            String                          @id @default(uuid())
-  name                          String
-  created_at                    DateTime                        @default(now())
-  updated_at                    DateTime                        @updatedAt
-  benefited_learned             Benefited[]                     @relation("LanguageLearned")
-  benefited_native              Benefited[]                     @relation("LanguageNative")
-  deleted_at                    DateTime?
-  @@map("language")
-  @@schema("pam")
-}
-
-model Province {
-  id                            String                          @id @default(uuid())
-  name                          String
-  country_id                    String
-  department_id                 String
-  country                       Country                         @relation(fields: [country_id], references: [id])
-  department                    Department                      @relation(fields: [department_id], references: [id])
-  created_at                    DateTime                        @default(now())
-  updated_at                    DateTime                        @updatedAt
-  deleted_at                    DateTime?
-  benefited_birth               Benefited[]                     @relation("ProvinceBirth")
-  benefited_live                Benefited[]                     @relation("ProvinceLive")
-  districts                     District[]
-  @@map("province")
-  @@schema("pam")
-}
-
-// >> SCHEMA: PCA
 enum Modality {
-  CPOT
   EATER
+  CPOT
+
   @@schema("pca")
 }
 
 enum Sex {
-  FEMALE
   MALE
+  FEMALE
+
   @@schema("pca")
 }
 
-model Center {
-  id                            String                          @id @default(uuid())
-  code                          String                          @unique
-  name                          String
-  address                       String?
-  members                       Int                             @default(0)
-  members_male                  Int                             @default(0)
-  members_female                Int                             @default(0)
-  situation                     String?      
-  latitude                      Float
-  longitude                     Float
-  president_id                  String?
-  directive_id                  String?
-  created_at                    DateTime                        @default(now())
-  updated_at                    DateTime                        @updatedAt
-  deleted_at                    DateTime?
-  modality                      Modality
-  directive                     Directive?                      @relation(fields: [directive_id], references: [id])
-  president                     President?                      @relation(fields: [president_id], references: [id])
-  @@map("center")
-  @@schema("pca")
-}
-
-model President {
-  id                            String                          @id @default(uuid())
-  name                          String
-  lastname                      String
-  dni                           String?
-  phone                         String?
-  birthday                      String?
-  created_at                    DateTime                        @default(now())
-  updated_at                    DateTime                        @updatedAt
-  deleted_at                    DateTime?
-  sex                           Sex
-  centers                       Center[]
-  @@map("president")
-  @@schema("pca")
-}
-
-model Directive {
-  id                            String                          @id @default(uuid())
-  resolution                    String      
-  start_at                      DateTime?
-  end_at                        DateTime?
-  created_at                    DateTime                        @default(now())
-  updated_at                    DateTime                        @updatedAt
-  deleted_at                    DateTime?
-  centers                       Center[]
-  @@map("directive")
-  @@schema("pca")
-}
-
-// >> SCHEMA: PVL
 enum Route {
   A
   B
   C
   D
+
   @@schema("pvl")
 }
 
-model Committee {
-  id                            String                          @id @default(uuid())
-  code                          String                          @unique
-  name                          String  
-  address                       String?
-  latitude                      Float
-  longitude                     Float
-  beneficiaries                 Int                             @default(0)
-  beneficiaries_foreign         Int                             @default(0)
-  members                       Int                             @default(0)
-  handicappeds                  Int                             @default(0)
-  commune                       String?
-  observation                   String?
-  coordinator_id                String
-  couple_id                     String
-  town_id                       String
-  created_at                    DateTime                        @default(now())
-  updated_at                    DateTime                        @updatedAt
-  deleted_at                    DateTime?
-  route                         Route
-  coordinator                   Coordinator                     @relation(fields: [coordinator_id], references: [id])
-  couple                        Couple                          @relation(fields: [couple_id], references: [id])
-  town                          Town                            @relation(fields: [town_id], references: [id])
-  @@map("committee")
-  @@schema("pvl")
-}
-
-model Coordinator {
-  id                            String                          @id @default(uuid())
-  name                          String
-  lastname                      String
-  dni                           String?
-  phone                         String?
-  birthday                      DateTime?
-  created_at                    DateTime                        @default(now())
-  updated_at                    DateTime                        @updatedAt
-  deleted_at                    DateTime?
-  comittees                     Committee[]
-  @@map("coordinator")
-  @@schema("pvl")
-}
-
-model Couple {
-  id                            String                          @id @default(uuid())
-  name                          String                          @unique
-  created_at                    DateTime                        @default(now())
-  updated_at                    DateTime                        @updatedAt
-  deleted_at                    DateTime?
-  comittees                     Committee[]
-  @@map("couple")
-  @@schema("pvl")
-}
-
-model Town {
-  id                            String                          @id @default(uuid())
-  name                          String                          @unique
-  created_at                    DateTime                        @default(now())
-  updated_at                    DateTime                        @updatedAt
-  deleted_at                    DateTime?
-  comittees                     Committee[]
-  @@map("town")
-  @@schema("pvl")
-}
-
-// >> SCHEMA: OMAPED
 enum Degree {
   MILD
   MODERATE
   PROCESS
   OTHER
   SEVERE
+
   @@schema("omaped")
 }
 
-model Disabled {
-  id                            String                          @id @default(uuid())
-  name                          String
-  lastname                      String
-  doc_num                       String?
-  phone                         String?
-  address                       String?
-  certificate                   String?
-  diagnostic1                   String?
-  diagnostic2                   String?
-  folio                         String?
-  atention                      String?
-  cert_disc                     String?
-  beca                          String?
-  job_placement                 Boolean                         @default(false)
-  entrepreneurship              String?
-  therapy                       String?
-  therapy_schedule              String?
-  reniec                        String?
-  reniec_shift                  String?
-  fair                          String?
-  conadis                       String?
-  conadis_date                  String?
-  conadis_procedure             String?
-  conadis_validity              String?
-  unnamed                       String?
-  contigo                       String?
-  pc1000                        String?
-  fad                           String?
-  census_taker                  String?
-  state                         String?
-  commune                       String?
-  wheelchair                    String?
-  birthday                      DateTime?
-  registered_at                 DateTime?
-  change_at                     DateTime?
-  created_at                    DateTime                        @default(now())
-  updated_at                    DateTime                        @updatedAt
-  deleted_at                    DateTime?
-  degree                        Degree?
-  doc_type                      Doctype?
-  @@map("disabled")
-  @@schema("omaped")
-}
-
-// >> SCHEME: ULE
 enum Format {
   FSU
   S100
+
   @@schema("ule")
 }
 
 enum Level {
   P
   PE
-  PU
   NP
+  PU
+
   @@schema("ule")
 }
 
-model Box {
-  id                            String                          @id @default(uuid())
-  code_num                      Int                             @default(0)
-  created_at                    DateTime                        @default(now())
-  updated_at                    DateTime                        @updatedAt
-  deleted_at                    DateTime?
-  registered                    Registered[]
-  @@map("box")
-  @@schema("ule")
-}
+enum Social {
+  CASE
+  PARTNER
+  PUBLIC
+  USER
 
-model Declaration {
-  id                            String                          @id @default(uuid())
-  code                          String
-  created_at                    DateTime                        @default(now())
-  updated_at                    DateTime                        @updatedAt
-  deleted_at                    DateTime?
-  registered                    Registered[]
-  @@map("declaration")
-  @@schema("ule")
-}
-
-model Enumerator {
-  id                            String                          @id @default(uuid())
-  dni                           String                          @unique
-  name                          String
-  lastname                      String
-  phone                         String?
-  birthday                      DateTime?
-  created_at                    DateTime                        @default(now())
-  updated_at                    DateTime                        @updatedAt
-  deleted_at                    DateTime?
-  registered                    Registered[]
-  @@map("enumerator")
-  @@schema("ule")
-}
-
-model Registered {
-  id                            String                          @id @default(uuid())
-  fsu                           String                          @unique
-  s100                          String                          @unique
-  dni                           String
-  name                          String
-  lastname                      String
-  phone                         String?
-  latitude                      Float?
-  longitude                     Float?
-  members                       Int                             @default(1)
-  birthday                      DateTime?
-  registered_at                 DateTime
-  created_at                    DateTime                        @default(now())
-  updated_at                    DateTime                        @updatedAt
-  deleted_at                    DateTime?
-  box_id                        String
-  declaration_id                String
-  enumerator_id                 String
-  urban_id                      String
-  format                        Format
-  level                         Level
-  box                           Box                             @relation(fields: [box_id], references: [id])
-  declaration                   Declaration                     @relation(fields: [declaration_id], references: [id])                        
-  enumerator                    Enumerator                      @relation(fields: [enumerator_id], references: [id])
-  urban                         Urban                           @relation(fields: [urban_id], references: [id])
-  @@map("registered")
-  @@schema("ule")
-}
-
-model Urban {
-  id                            String                          @id @default(uuid())
-  name                          String                          @unique
-  created_at                    DateTime                        @default(now())
-  updated_at                    DateTime                        @updatedAt
-  deleted_at                    DateTime?
-  registered                    Registered[]
-  @@map("urban")
-  @@schema("ule")
+  @@schema("pca")
 }

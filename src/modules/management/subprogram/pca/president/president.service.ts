@@ -8,6 +8,7 @@ import {
   timezoneHelper,
 } from '../../../../../common/helpers';
 import { SearchDto } from '../../../../../common/dto';
+import { filterPresident } from './helpers';
 
 @Injectable()
 export class PresidentService {
@@ -24,19 +25,20 @@ export class PresidentService {
     return await this.getPresidentById(president.id);
   }
 
-  async findAll(dto: SearchDto): Promise<any> {
-    const { search, ...pagination } = dto;
-    const where: any = { deleted_at: null };
-    if (search)
-      where.OR = [
-        { name: { contains: search, mode: 'insensitive' } },
-        { lastname: { contains: search, mode: 'insensitive' } },
-        { dni: { contains: search, mode: 'insensitive' } },
-      ];
+  async findAll(dto: any): Promise<any> {
+    const { where, pagination } = filterPresident(dto);
+
     return paginationHelper(
       this.prisma.president,
       {
         where,
+        include: {
+          centers: {
+            select: {
+              modality: true,
+            },
+          },
+        },
         orderBy: { lastname: 'asc' },
       },
       pagination,

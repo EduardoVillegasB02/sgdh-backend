@@ -13,16 +13,19 @@ import {
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { PresidentService } from './president.service';
-import { CreatePresidentDto, UpdatePresidentDto } from './dto';
+import {
+  CreatePresidentDto,
+  FilterPresidentDto,
+  UpdatePresidentDto,
+} from './dto';
 import { SuccessMessage } from '../../../../../common/decorators';
-import { SearchDto } from '../../../../../common/dto';
 
 @Controller('pca/president')
 export class PresidentController {
   constructor(private readonly presidentService: PresidentService) {}
 
   @Get()
-  findAll(@Query() dto: SearchDto) {
+  findAll(@Query() dto: FilterPresidentDto) {
     return this.presidentService.findAll(dto);
   }
 
