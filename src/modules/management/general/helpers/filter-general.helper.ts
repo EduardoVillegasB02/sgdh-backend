@@ -11,37 +11,21 @@ export function filterGeneral(dto: FilterGeneralDto): any {
     age_max,
     ...pagination
   } = dto;
-
   const where: any = { deleted_at: null };
-
-  if (search) {
+  if (search)
     where.OR = [
       { name: { contains: search, mode: 'insensitive' } },
       { lastname: { contains: search, mode: 'insensitive' } },
       { dni: { contains: search, mode: 'insensitive' } },
     ];
-  }
-
-  if (module_name) {
-<<<<<<< HEAD
-  where.module = {
-    name: {
-      contains: module_name,
-      mode: 'insensitive',
-    },
-  };
-}
-=======
+  if (module_name)
     where.module = {
       name: {
-        equals: module_name,
+        contains: module_name,
         mode: 'insensitive',
       },
     };
-  }
->>>>>>> c34d5f9 (feat: recipient crud filter)
   const today = new Date();
-
   if (age) {
     const maxDate = new Date(
       today.getFullYear() - Number(age),
@@ -60,7 +44,6 @@ export function filterGeneral(dto: FilterGeneralDto): any {
       lt: maxDate,
     };
   }
-
   if (age_min || age_max) {
     let gte: any;
     let lte: any;
@@ -81,15 +64,11 @@ export function filterGeneral(dto: FilterGeneralDto): any {
       ...(lte && { lte }),
     };
   }
-
   if (birthday) {
     const [monthStr, dayStr] = birthday.split('-');
-
     const m = Number(monthStr) - 1;
     const d = Number(dayStr);
-
     const ranges: any[] = [];
-
     for (let year = 1900; year <= 2100; year++) {
       ranges.push({
         birthday: {

@@ -11,16 +11,11 @@ export class GeneralService {
 
   async findAll(dto: FilterGeneralDto): Promise<any> {
     const { where, pagination } = filterGeneral(dto);
-<<<<<<< HEAD
-
-=======
->>>>>>> c34d5f9 (feat: recipient crud filter)
     return paginationHelper(
       this.prisma.general,
       {
         where,
-<<<<<<< HEAD
-        orderBy: { name: 'asc' },
+        orderBy: { lastname: 'asc' },
         include: {
           module: {
             select: {
@@ -28,9 +23,6 @@ export class GeneralService {
             },
           },
         },
-=======
-        orderBy: { lastname: 'asc' },
->>>>>>> c34d5f9 (feat: recipient crud filter)
       },
       pagination,
     );
