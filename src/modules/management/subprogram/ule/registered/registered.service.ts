@@ -13,6 +13,7 @@ import {
   timezoneHelper,
 } from '../../../../../common/helpers';
 import { SearchDto } from 'src/common/dto';
+import { filterRegistered } from './helpers';
 
 @Injectable()
 export class RegisteredService {
@@ -34,14 +35,7 @@ export class RegisteredService {
   }
 
   async findAll(dto: FilterRegisteredDto): Promise<any> {
-    const { search, ...pagination } = dto;
-    const where: any = { deleted_at: null };
-    if (search)
-      where.OR = [
-        { dni: { contains: search, mode: 'insensitive' } },
-        { name: { contains: search, mode: 'insensitive' } },
-        { lastname: { contains: search, mode: 'insensitive' } },
-      ];
+    const { where, pagination } = filterRegistered(dto);
     return paginationHelper(
       this.prisma.registered,
       {
