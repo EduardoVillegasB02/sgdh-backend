@@ -35,6 +35,7 @@ import { ProvinceModule } from './modules/management/subprogram/pam/province/pro
 import { GeneralModule } from './modules/management/general/general.module';
 import { BenefitedModule } from './modules/management/subprogram/pam/benefited/benefited.module';
 import { DisabledModule } from './modules/management/subprogram/omaped/disabled/disabled.module';
+import { RecipientModule } from './modules/management/subprogram/pca/recipient/recipient.module';
 
 @Module({
   imports: [
@@ -74,6 +75,7 @@ import { DisabledModule } from './modules/management/subprogram/omaped/disabled/
     GeneralModule,
     BenefitedModule,
     DisabledModule,
+    RecipientModule,
   ],
   controllers: [AppController],
   providers: [AppService],
