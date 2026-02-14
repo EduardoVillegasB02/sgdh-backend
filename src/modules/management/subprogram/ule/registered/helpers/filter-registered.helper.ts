@@ -14,6 +14,9 @@ export function filterRegistered(dto: FilterRegisteredDto): any {
     members_max,
     age_min,
     age_max,
+    age,
+    birthday_day,
+    birthday_month,
     ...pagination
   } = dto;
 
@@ -46,9 +49,28 @@ export function filterRegistered(dto: FilterRegisteredDto): any {
     };
   }
 
+  const today = new Date();
+
+  if (age) {
+    const maxDate = new Date(
+      today.getFullYear() - Number(age),
+      today.getMonth(),
+      today.getDate() + 1,
+    );
+
+    const minDate = new Date(
+      today.getFullYear() - Number(age) - 1,
+      today.getMonth(),
+      today.getDate() + 1,
+    );
+
+    where.birthday = {
+      gte: minDate,
+      lt: maxDate,
+    };
+  }
   if (age_min || age_max) {
     const now = timezoneHelper();
-
     if (age_min)
       where.birthday = {
         ...(where.birthday || {}),
@@ -58,7 +80,6 @@ export function filterRegistered(dto: FilterRegisteredDto): any {
           now.getDate(),
         ),
       };
-
     if (age_max)
       where.birthday = {
         ...(where.birthday || {}),
@@ -69,7 +90,42 @@ export function filterRegistered(dto: FilterRegisteredDto): any {
         ),
       };
   }
+  if (birthday_day) {
+    const [monthStr, dayStr] = birthday_day.split('-');
 
+    const m = Number(monthStr) - 1;
+    const d = Number(dayStr);
+
+    const ranges: any[] = [];
+
+    for (let year = 1900; year <= 2100; year++) {
+      ranges.push({
+        birthday: {
+          gte: new Date(Date.UTC(year, m, d, 0, 0, 0)),
+          lte: new Date(Date.UTC(year, m, d, 23, 59, 59)),
+        },
+      });
+    }
+    where.AND = [
+      ...(where.AND || []),
+      { OR: ranges },
+    ];
+  }
+  if (birthday_month) {
+    const m = Number(birthday_month);
+    const ranges: any[] = [];
+    for (let year = 1900; year <= 2100; year++)
+      ranges.push({
+        birthday: {
+          gte: new Date(Date.UTC(year, m - 1, 1)),
+          lt: new Date(Date.UTC(year, m, 1)),
+        },
+      });
+    where.AND = [
+      ...(where.AND || []),
+      { OR: ranges },
+    ];
+  }
   return {
     where,
     pagination: {

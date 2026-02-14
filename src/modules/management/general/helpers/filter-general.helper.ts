@@ -25,7 +25,7 @@ export function filterGeneral(dto: FilterGeneralDto): any {
   if (module_name) {
   where.module = {
     name: {
-      equals: module_name,
+      contains: module_name,
       mode: 'insensitive',
     },
   };

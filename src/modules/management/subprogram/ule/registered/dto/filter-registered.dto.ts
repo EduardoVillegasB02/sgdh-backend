@@ -43,6 +43,10 @@ export class FilterRegisteredDto extends SearchDto {
 
   @IsOptional()
   @IsString()
+  age?: string;
+
+  @IsOptional()
+  @IsString()
   age_min?: string;
 
   @IsOptional()
@@ -50,7 +54,6 @@ export class FilterRegisteredDto extends SearchDto {
   age_max?: string;
 
   @IsOptional()
-  @IsDateString()
   birthday_day?: string;
 
   @IsOptional()
