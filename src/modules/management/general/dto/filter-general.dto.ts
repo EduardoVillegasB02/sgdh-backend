@@ -1,5 +1,5 @@
-import { IsOptional, IsUUID } from 'class-validator';
-import { SearchDto } from 'src/common/dto';
+import { IsOptional } from 'class-validator';
+import { SearchDto } from '../../../../common/dto';
 
 export class FilterGeneralDto extends SearchDto {
   @IsOptional()

@@ -468,6 +468,14 @@ enum Sex {
   @@schema("pca")
 }
 
+enum Social {
+  CASE
+  PARTNER
+  PUBLIC
+  USER
+  @@schema("pca")
+}
+
 model Center {
   id                            String                          @id @default(uuid())
   code                          String                          @unique
@@ -487,7 +495,21 @@ model Center {
   modality                      Modality
   directive                     Directive?                      @relation(fields: [directive_id], references: [id])
   president                     President?                      @relation(fields: [president_id], references: [id])
+  recipients                    Recipient[]
   @@map("center")
+  @@schema("pca")
+}
+
+model Directive {
+  id                            String                          @id @default(uuid())
+  resolution                    String      
+  start_at                      DateTime?
+  end_at                        DateTime?
+  created_at                    DateTime                        @default(now())
+  updated_at                    DateTime                        @updatedAt
+  deleted_at                    DateTime?
+  centers                       Center[]
+  @@map("directive")
   @@schema("pca")
 }
 
@@ -507,16 +529,30 @@ model President {
   @@schema("pca")
 }
 
-model Directive {
+model Recipient {
   id                            String                          @id @default(uuid())
-  resolution                    String      
-  start_at                      DateTime?
-  end_at                        DateTime?
+  doc_num                       String
+  lastname                      String
+  name                          String
+  address                       String?
+  phone                         String?
+  pregnant                      Boolean                         @default(false)
+  disabled                      Boolean                         @default(false)
+  assignee_doc_num              String?
+  assignee_lastname             String?
+  assignee_name                 String?
+  birthday                      DateTime?
+  registered_at                 DateTime?
   created_at                    DateTime                        @default(now())
   updated_at                    DateTime                        @updatedAt
   deleted_at                    DateTime?
-  centers                       Center[]
-  @@map("directive")
+  center_id                     String?
+  doc_type                      Doctype
+  modality                      Modality
+  sex                           Sex
+  social                        Social?
+  center                        Center?                         @relation(fields: [center_id], references: [id])
+  @@map("recipient")
   @@schema("pca")
 }
 

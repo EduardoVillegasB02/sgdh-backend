@@ -9,7 +9,6 @@ import {
 } from '../../../../../common/helpers';
 import { SearchDto } from '../../../../../common/dto';
 
-
 @Injectable()
 export class DistrictService {
   constructor(private readonly prisma: PrismaService) {}

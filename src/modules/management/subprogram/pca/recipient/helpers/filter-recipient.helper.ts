@@ -1,30 +1,30 @@
-import { FilterGeneralDto } from '../dto';
+import { FilterRecipientDto } from '../dto';
 
-export function filterGeneral(dto: FilterGeneralDto): any {
+export function filterRecipient(dto: FilterRecipientDto): any {
   const {
     search,
-    module_name,
     birthday,
     month,
     age,
     age_min,
     age_max,
+    modality,
+    sex,
+    social,
     ...pagination
   } = dto;
+
   const where: any = { deleted_at: null };
-  if (search)
+  if (search) {
     where.OR = [
       { name: { contains: search, mode: 'insensitive' } },
       { lastname: { contains: search, mode: 'insensitive' } },
       { dni: { contains: search, mode: 'insensitive' } },
     ];
-  if (module_name)
-    where.module = {
-      name: {
-        contains: module_name,
-        mode: 'insensitive',
-      },
-    };
+  }
+  if (modality) where.modality = modality;
+  if (sex) where.sex = sex;
+  if (social) where.social = social;
   const today = new Date();
   if (age) {
     const maxDate = new Date(
@@ -32,13 +32,11 @@ export function filterGeneral(dto: FilterGeneralDto): any {
       today.getMonth(),
       today.getDate() + 1,
     );
-
     const minDate = new Date(
       today.getFullYear() - Number(age) - 1,
       today.getMonth(),
       today.getDate() + 1,
     );
-
     where.birthday = {
       gte: minDate,
       lt: maxDate,

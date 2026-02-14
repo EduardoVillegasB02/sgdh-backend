@@ -1,10 +1,7 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { FilterGeneralDto } from './dto';
 import { PrismaService } from '../../../prisma/prisma.service';
-import {
-  paginationHelper,
-  timezoneHelper,
-} from '../../../common/helpers';
+import { paginationHelper, timezoneHelper } from '../../../common/helpers';
 import { Send } from '@prisma/client';
 import { filterGeneral } from './helpers';
 
@@ -14,12 +11,11 @@ export class GeneralService {
 
   async findAll(dto: FilterGeneralDto): Promise<any> {
     const { where, pagination } = filterGeneral(dto);
-
     return paginationHelper(
       this.prisma.general,
       {
         where,
-        orderBy: { name: 'asc' },
+        orderBy: { lastname: 'asc' },
         include: {
           module: {
             select: {
