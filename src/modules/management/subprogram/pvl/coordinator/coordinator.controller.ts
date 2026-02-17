@@ -19,7 +19,6 @@ import {
   UpdateCoordinatorDto,
 } from './dto';
 import { SuccessMessage } from '../../../../../common/decorators';
-import { SearchDto } from '../../../../../common/dto';
 
 @Controller('pvl/coordinator')
 export class CoordinatorController {

@@ -7,12 +7,11 @@ import {
   UpdateCoordinatorDto,
 } from './dto';
 import { PrismaService } from '../../../../../prisma/prisma.service';
+import { filterCoordinator } from './helpers';
 import {
   paginationHelper,
   timezoneHelper,
 } from '../../../../../common/helpers';
-import { SearchDto } from '../../../../../common/dto';
-import { filterCoordinator } from './helpers';
 
 @Injectable()
 export class CoordinatorService {
@@ -31,7 +30,6 @@ export class CoordinatorService {
 
   async findAll(dto: FilterCoordinatorDto): Promise<any> {
     const { where, pagination } = filterCoordinator(dto);
-
     return paginationHelper(
       this.prisma.coordinator,
       {

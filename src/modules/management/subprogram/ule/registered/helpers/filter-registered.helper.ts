@@ -19,12 +19,8 @@ export function filterRegistered(dto: FilterRegisteredDto): any {
     birthday_month,
     ...pagination
   } = dto;
-
-  const where: any = {
-    deleted_at: null,
-  };
-
-  if (search) {
+  const where: any = { deleted_at: null };
+  if (search)
     where.OR = [
       { name: { contains: search, mode: 'insensitive' } },
       { lastname: { contains: search, mode: 'insensitive' } },
@@ -32,38 +28,29 @@ export function filterRegistered(dto: FilterRegisteredDto): any {
       { fsu: { contains: search } },
       { s100: { contains: search } },
     ];
-  }
-
   if (format) where.format = format;
   if (level) where.level = level;
-
   if (box_id) where.box_id = box_id;
   if (declaration_id) where.declaration_id = declaration_id;
   if (enumerator_id) where.enumerator_id = enumerator_id;
   if (urban_id) where.urban_id = urban_id;
-
-  if (members_min || members_max) {
+  if (members_min || members_max)
     where.members = {
       ...(members_min && { gte: Number(members_min) }),
       ...(members_max && { lte: Number(members_max) }),
     };
-  }
-
   const today = new Date();
-
   if (age) {
     const maxDate = new Date(
       today.getFullYear() - Number(age),
       today.getMonth(),
       today.getDate() + 1,
     );
-
     const minDate = new Date(
       today.getFullYear() - Number(age) - 1,
       today.getMonth(),
       today.getDate() + 1,
     );
-
     where.birthday = {
       gte: minDate,
       lt: maxDate,
@@ -92,20 +79,16 @@ export function filterRegistered(dto: FilterRegisteredDto): any {
   }
   if (birthday_day) {
     const [monthStr, dayStr] = birthday_day.split('-');
-
     const m = Number(monthStr) - 1;
     const d = Number(dayStr);
-
     const ranges: any[] = [];
-
-    for (let year = 1900; year <= 2100; year++) {
+    for (let year = 1900; year <= 2100; year++)
       ranges.push({
         birthday: {
           gte: new Date(Date.UTC(year, m, d, 0, 0, 0)),
           lte: new Date(Date.UTC(year, m, d, 23, 59, 59)),
         },
       });
-    }
     where.AND = [...(where.AND || []), { OR: ranges }];
   }
   if (birthday_month) {

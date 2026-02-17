@@ -12,16 +12,14 @@ export function filterDisabled(dto: FilterDisabledDto): any {
     ...pagination
   } = dto;
   const where: any = { deleted_at: null };
-  if (search) {
+  if (search)
     where.OR = [
       { name: { contains: search, mode: 'insensitive' } },
       { lastname: { contains: search, mode: 'insensitive' } },
       { dni: { contains: search, mode: 'insensitive' } },
     ];
-  }
   if (degree) where.degree = degree;
   const today = new Date();
-
   if (age) {
     const maxDate = new Date(
       today.getFullYear() - Number(age),

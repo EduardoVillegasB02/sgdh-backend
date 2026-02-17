@@ -1,4 +1,4 @@
-import { IsOptional, IsUUID } from 'class-validator';
+import { IsOptional, IsString, IsUUID } from 'class-validator';
 import { SearchDto } from '../../../../../../common/dto';
 
 export class FilterCoordinatorDto extends SearchDto {
@@ -7,17 +7,22 @@ export class FilterCoordinatorDto extends SearchDto {
   coordinator_id?: string;
 
   @IsOptional()
-  age?: number;
+  @IsString()
+  age?: string;
 
   @IsOptional()
-  age_min?: number;
+  @IsString()
+  age_min?: string;
 
   @IsOptional()
-  age_max?: number;
+  @IsString()
+  age_max?: string;
 
   @IsOptional()
+  @IsString()
   month?: string;
 
   @IsOptional()
+  @IsString()
   birthday?: string;
 }

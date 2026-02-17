@@ -1,6 +1,6 @@
 import { Degree } from '@prisma/client';
-import { IsDateString, IsEnum, IsOptional, IsUUID } from 'class-validator';
-import { SearchDto } from 'src/common/dto';
+import { IsEnum, IsOptional, IsString } from 'class-validator';
+import { SearchDto } from '../../../../../../common/dto';
 
 export class FilterDisabledDto extends SearchDto {
   @IsOptional()
@@ -8,17 +8,22 @@ export class FilterDisabledDto extends SearchDto {
   degree?: Degree;
 
   @IsOptional()
-  age?: number;
+  @IsString()
+  age?: string;
 
   @IsOptional()
-  age_min?: number;
+  @IsString()
+  age_min?: string;
 
   @IsOptional()
-  age_max?: number;
+  @IsString()
+  age_max?: string;
 
   @IsOptional()
+  @IsString()
   month?: string;
 
   @IsOptional()
+  @IsString()
   birthday?: string;
 }

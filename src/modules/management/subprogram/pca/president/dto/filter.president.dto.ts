@@ -1,23 +1,29 @@
-import {} from '@prisma/client';
-import { IsOptional } from 'class-validator';
+import { Modality } from '@prisma/client';
+import { IsEnum, IsOptional, IsString } from 'class-validator';
 import { SearchDto } from '../../../../../../common/dto';
 
 export class FilterPresidentDto extends SearchDto {
   @IsOptional()
-  modality?: 'CPOT' | 'EATER';
+  @IsEnum(Modality)
+  modality?: Modality;
 
   @IsOptional()
-  age?: number;
+  @IsString()
+  age?: string;
 
   @IsOptional()
-  age_min?: number;
+  @IsString()
+  age_min?: string;
 
   @IsOptional()
-  age_max?: number;
+  @IsString()
+  age_max?: string;
 
   @IsOptional()
+  @IsString()
   month?: string;
 
   @IsOptional()
+  @IsString()
   birthday?: string;
 }

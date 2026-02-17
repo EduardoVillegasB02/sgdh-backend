@@ -11,37 +11,30 @@ export function filterPresident(dto: FilterPresidentDto): any {
     age_max,
     ...pagination
   } = dto;
-
   const where: any = { deleted_at: null };
-
   if (search)
     where.OR = [
       { doc_num: { contains: search, mode: 'insensitive' } },
       { name: { contains: search, mode: 'insensitive' } },
       { lastname: { contains: search, mode: 'insensitive' } },
     ];
-
   const today = new Date();
-
   if (age) {
     const maxDate = new Date(
       today.getFullYear() - Number(age),
       today.getMonth(),
       today.getDate() + 1,
     );
-
     const minDate = new Date(
       today.getFullYear() - Number(age) - 1,
       today.getMonth(),
       today.getDate() + 1,
     );
-
     where.birthday = {
       gte: minDate,
       lt: maxDate,
     };
   }
-
   if (age_min || age_max) {
     let gte: any;
     let lte: any;
@@ -62,23 +55,18 @@ export function filterPresident(dto: FilterPresidentDto): any {
       ...(lte && { lte }),
     };
   }
-
   if (birthday) {
     const [monthStr, dayStr] = birthday.split('-');
-
     const m = Number(monthStr) - 1;
     const d = Number(dayStr);
-
     const ranges: any[] = [];
-
-    for (let year = 1900; year <= 2100; year++) {
+    for (let year = 1900; year <= 2100; year++)
       ranges.push({
         birthday: {
           gte: new Date(Date.UTC(year, m, d, 0, 0, 0)),
           lte: new Date(Date.UTC(year, m, d, 23, 59, 59)),
         },
       });
-    }
     where.AND = [...(where.AND || []), { OR: ranges }];
   }
   if (month) {
@@ -93,13 +81,12 @@ export function filterPresident(dto: FilterPresidentDto): any {
       });
     where.AND = [...(where.AND || []), { OR: ranges }];
   }
-  if (modality) {
+  if (modality)
     where.centers = {
       some: {
         modality: modality,
       },
     };
-  }
   return {
     where,
     pagination: { ...pagination },

@@ -28,16 +28,13 @@ export function filterBenefited(dto: FilterBenefitedDto): any {
     age_max,
     ...pagination
   } = dto;
-
   const where: any = { deleted_at: null };
-
   if (search)
     where.OR = [
       { doc_num: { contains: search, mode: 'insensitive' } },
       { name: { contains: search, mode: 'insensitive' } },
       { lastname: { contains: search, mode: 'insensitive' } },
     ];
-
   if (country) where.country_id = country;
   if (depa_birth) where.department_birth_id = depa_birth;
   if (depa_live) where.department_live_id = depa_live;
@@ -56,28 +53,23 @@ export function filterBenefited(dto: FilterBenefitedDto): any {
   if (house_status) where.housing_status = house_status;
   if (mode) where.mode = mode;
   if (sex) where.sex = sex;
-
   const today = new Date();
-
   if (age) {
     const maxDate = new Date(
       today.getFullYear() - Number(age),
       today.getMonth(),
       today.getDate() + 1,
     );
-
     const minDate = new Date(
       today.getFullYear() - Number(age) - 1,
       today.getMonth(),
       today.getDate() + 1,
     );
-
     where.birthday = {
       gte: minDate,
       lt: maxDate,
     };
   }
-
   if (age_min || age_max) {
     let gte: any;
     let lte: any;
@@ -98,23 +90,18 @@ export function filterBenefited(dto: FilterBenefitedDto): any {
       ...(lte && { lte }),
     };
   }
-
   if (birthday) {
     const [monthStr, dayStr] = birthday.split('-');
-
     const m = Number(monthStr) - 1;
     const d = Number(dayStr);
-
     const ranges: any[] = [];
-
-    for (let year = 1900; year <= 2100; year++) {
+    for (let year = 1900; year <= 2100; year++)
       ranges.push({
         birthday: {
           gte: new Date(Date.UTC(year, m, d, 0, 0, 0)),
           lte: new Date(Date.UTC(year, m, d, 23, 59, 59)),
         },
       });
-    }
     where.AND = [...(where.AND || []), { OR: ranges }];
   }
   if (month) {
