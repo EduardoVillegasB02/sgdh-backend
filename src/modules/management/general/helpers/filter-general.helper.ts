@@ -32,13 +32,11 @@ export function filterGeneral(dto: FilterGeneralDto): any {
       today.getMonth(),
       today.getDate() + 1,
     );
-
     const minDate = new Date(
       today.getFullYear() - Number(age) - 1,
       today.getMonth(),
       today.getDate() + 1,
     );
-
     where.birthday = {
       gte: minDate,
       lt: maxDate,
@@ -69,14 +67,13 @@ export function filterGeneral(dto: FilterGeneralDto): any {
     const m = Number(monthStr) - 1;
     const d = Number(dayStr);
     const ranges: any[] = [];
-    for (let year = 1900; year <= 2100; year++) {
+    for (let year = 1900; year <= 2100; year++)
       ranges.push({
         birthday: {
           gte: new Date(Date.UTC(year, m, d, 0, 0, 0)),
           lte: new Date(Date.UTC(year, m, d, 23, 59, 59)),
         },
       });
-    }
     where.AND = [...(where.AND || []), { OR: ranges }];
   }
   if (month) {

@@ -1,11 +1,10 @@
-import { Degree } from '@prisma/client';
-import { IsEnum, IsOptional, IsString } from 'class-validator';
+import { IsOptional, IsString, IsUUID } from 'class-validator';
 import { SearchDto } from '../../../../../../common/dto';
 
-export class FilterDisabledDto extends SearchDto {
+export class FilterCoordinatorDto extends SearchDto {
   @IsOptional()
-  @IsEnum(Degree)
-  degree?: Degree;
+  @IsUUID()
+  coordinator_id?: string;
 
   @IsOptional()
   @IsString()
