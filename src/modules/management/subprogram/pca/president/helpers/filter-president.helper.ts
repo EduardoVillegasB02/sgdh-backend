@@ -1,24 +1,23 @@
-import { FilterDisabledDto } from '../dto';
+import { FilterPresidentDto } from '../dto';
 
-export function filterDisabled(dto: FilterDisabledDto): any {
+export function filterPresident(dto: FilterPresidentDto): any {
   const {
     search,
+    birthday,
+    modality,
+    month,
     age,
     age_min,
     age_max,
-    birthday,
-    degree,
-    month,
     ...pagination
   } = dto;
   const where: any = { deleted_at: null };
   if (search)
     where.OR = [
+      { doc_num: { contains: search, mode: 'insensitive' } },
       { name: { contains: search, mode: 'insensitive' } },
       { lastname: { contains: search, mode: 'insensitive' } },
-      { dni: { contains: search, mode: 'insensitive' } },
     ];
-  if (degree) where.degree = degree;
   const today = new Date();
   if (age) {
     const maxDate = new Date(
@@ -61,14 +60,13 @@ export function filterDisabled(dto: FilterDisabledDto): any {
     const m = Number(monthStr) - 1;
     const d = Number(dayStr);
     const ranges: any[] = [];
-    for (let year = 1900; year <= 2100; year++) {
+    for (let year = 1900; year <= 2100; year++)
       ranges.push({
         birthday: {
           gte: new Date(Date.UTC(year, m, d, 0, 0, 0)),
           lte: new Date(Date.UTC(year, m, d, 23, 59, 59)),
         },
       });
-    }
     where.AND = [...(where.AND || []), { OR: ranges }];
   }
   if (month) {
@@ -83,6 +81,12 @@ export function filterDisabled(dto: FilterDisabledDto): any {
       });
     where.AND = [...(where.AND || []), { OR: ranges }];
   }
+  if (modality)
+    where.centers = {
+      some: {
+        modality: modality,
+      },
+    };
   return {
     where,
     pagination: { ...pagination },

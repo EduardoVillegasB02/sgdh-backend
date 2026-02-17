@@ -13,16 +13,19 @@ import {
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { CoordinatorService } from './coordinator.service';
-import { CreateCoordinatorDto, UpdateCoordinatorDto } from './dto';
+import {
+  CreateCoordinatorDto,
+  FilterCoordinatorDto,
+  UpdateCoordinatorDto,
+} from './dto';
 import { SuccessMessage } from '../../../../../common/decorators';
-import { SearchDto } from '../../../../../common/dto';
 
 @Controller('pvl/coordinator')
 export class CoordinatorController {
   constructor(private readonly coordinatorService: CoordinatorService) {}
 
   @Get()
-  findAll(@Query() dto: SearchDto) {
+  findAll(@Query() dto: FilterCoordinatorDto) {
     return this.coordinatorService.findAll(dto);
   }
 

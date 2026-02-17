@@ -1,11 +1,5 @@
 import { Modality } from '@prisma/client';
-import {
-  IsDateString,
-  IsEnum,
-  IsOptional,
-  IsString,
-  IsUUID,
-} from 'class-validator';
+import { IsEnum, IsOptional, IsString, IsUUID } from 'class-validator';
 import { SearchDto } from '../../../../../../common/dto';
 
 export class FilterCenterDto extends SearchDto {
@@ -36,12 +30,4 @@ export class FilterCenterDto extends SearchDto {
   @IsOptional()
   @IsString()
   president_age_max?: string;
-
-  @IsOptional()
-  @IsDateString()
-  president_birthday_day?: string;
-
-  @IsOptional()
-  @IsString()
-  president_birthday_month?: string;
 }

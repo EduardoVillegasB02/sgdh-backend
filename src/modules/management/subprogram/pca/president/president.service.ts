@@ -1,13 +1,17 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { President, Sex } from '@prisma/client';
 import * as xlsx from 'xlsx';
-import { CreatePresidentDto, UpdatePresidentDto } from './dto';
+import {
+  CreatePresidentDto,
+  FilterPresidentDto,
+  UpdatePresidentDto,
+} from './dto';
 import { PrismaService } from '../../../../../prisma/prisma.service';
+import { filterPresident } from './helpers';
 import {
   paginationHelper,
   timezoneHelper,
 } from '../../../../../common/helpers';
-import { SearchDto } from '../../../../../common/dto';
 
 @Injectable()
 export class PresidentService {
@@ -24,19 +28,19 @@ export class PresidentService {
     return await this.getPresidentById(president.id);
   }
 
-  async findAll(dto: SearchDto): Promise<any> {
-    const { search, ...pagination } = dto;
-    const where: any = { deleted_at: null };
-    if (search)
-      where.OR = [
-        { name: { contains: search, mode: 'insensitive' } },
-        { lastname: { contains: search, mode: 'insensitive' } },
-        { dni: { contains: search, mode: 'insensitive' } },
-      ];
+  async findAll(dto: FilterPresidentDto): Promise<any> {
+    const { where, pagination } = filterPresident(dto);
     return paginationHelper(
       this.prisma.president,
       {
         where,
+        include: {
+          centers: {
+            select: {
+              modality: true,
+            },
+          },
+        },
         orderBy: { lastname: 'asc' },
       },
       pagination,
@@ -107,10 +111,9 @@ export class PresidentService {
     const president = await this.prisma.president.findUnique({
       where: { id },
     });
-    if (!president)
-      throw new BadRequestException('Centro de acoplo no encontrado');
+    if (!president) throw new BadRequestException('Presidente no encontrado');
     if (president.deleted_at && !toogle)
-      throw new BadRequestException('Centro de acoplo eliminado');
+      throw new BadRequestException('Presidente eliminado');
     return president;
   }
 }

@@ -1,11 +1,11 @@
-import { Degree } from '@prisma/client';
+import { Modality } from '@prisma/client';
 import { IsEnum, IsOptional, IsString } from 'class-validator';
 import { SearchDto } from '../../../../../../common/dto';
 
-export class FilterDisabledDto extends SearchDto {
+export class FilterPresidentDto extends SearchDto {
   @IsOptional()
-  @IsEnum(Degree)
-  degree?: Degree;
+  @IsEnum(Modality)
+  modality?: Modality;
 
   @IsOptional()
   @IsString()

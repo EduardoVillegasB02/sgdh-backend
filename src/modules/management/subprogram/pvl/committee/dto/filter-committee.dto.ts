@@ -1,11 +1,5 @@
 import { Route } from '@prisma/client';
-import {
-  IsDateString,
-  IsEnum,
-  IsOptional,
-  IsString,
-  IsUUID,
-} from 'class-validator';
+import { IsEnum, IsOptional, IsString, IsUUID } from 'class-validator';
 import { SearchDto } from '../../../../../../common/dto';
 
 export class FilterCommitteeDto extends SearchDto {
@@ -32,19 +26,4 @@ export class FilterCommitteeDto extends SearchDto {
   @IsOptional()
   @IsString()
   beneficiaries_max?: string;
-
-  @IsOptional()
-  age?: number;
-
-  @IsOptional()
-  age_min?: number;
-
-  @IsOptional()
-  age_max?: number;
-
-  @IsOptional()
-  month?: string;
-
-  @IsOptional()
-  birthday?: string;
 }
