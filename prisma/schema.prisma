@@ -4,10 +4,10 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql"
-  url      = env("DATABASE_URL")
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
   directUrl = env("DIRECT_URL")
-  schemas  = ["initial", "pam", "pca", "pvl", "omaped", "ule"]
+  schemas   = ["initial", "pam", "pca", "pvl", "omaped", "ule"]
 }
 
 // >> SCHEMA: initial
@@ -615,6 +615,34 @@ model Couple {
   deleted_at                    DateTime?
   comittees                     Committee[]
   @@map("couple")
+  @@schema("pvl")
+}
+
+model Dependent {
+  id                            String                          @id @default(uuid())
+  committee                     String
+  doc_num                       String
+  lastname                      String
+  name                          String
+  phone                         String?
+  bond                          String?
+  observation                   String?
+  semester_leave                String?
+  priority                      Int?
+  pregnant_weeks                Int?
+  pregnant                      Boolean                         @default(false)
+  disabled                      Boolean                         @default(false)
+  tbc                           Boolean                         @default(false)
+  malnutrition                  Boolean                         @default(false)
+  breastfeeding_end_at          DateTime?
+  due_at                        DateTime?
+  start_at                      DateTime?
+  birthday                      DateTime?
+  created_at                    DateTime                        @default(now())
+  updated_at                    DateTime                        @updatedAt
+  deleted_at                    DateTime?
+  doc_type                      Doctype
+  @@map("dependent")
   @@schema("pvl")
 }
 

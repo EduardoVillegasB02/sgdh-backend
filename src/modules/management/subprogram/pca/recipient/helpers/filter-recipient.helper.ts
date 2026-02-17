@@ -19,7 +19,7 @@ export function filterRecipient(dto: FilterRecipientDto): any {
     where.OR = [
       { name: { contains: search, mode: 'insensitive' } },
       { lastname: { contains: search, mode: 'insensitive' } },
-      { dni: { contains: search, mode: 'insensitive' } },
+      { doc_num: { contains: search, mode: 'insensitive' } },
     ];
   }
   if (modality) where.modality = modality;
