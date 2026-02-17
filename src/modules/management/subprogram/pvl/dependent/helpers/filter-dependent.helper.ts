@@ -1,13 +1,13 @@
-import { FilterDisabledDto } from '../dto';
+import { FilterDependentDto } from '../dto';
 
-export function filterDisabled(dto: FilterDisabledDto): any {
+export function filterDependent(dto: FilterDependentDto): any {
   const {
     search,
+    priority,
     age,
     age_min,
     age_max,
     birthday,
-    degree,
     month,
     ...pagination
   } = dto;
@@ -18,7 +18,7 @@ export function filterDisabled(dto: FilterDisabledDto): any {
       { lastname: { contains: search, mode: 'insensitive' } },
       { doc_num: { contains: search, mode: 'insensitive' } },
     ];
-  if (degree) where.degree = degree;
+  if (priority) where.degree = Number(priority);
   const today = new Date();
   if (age) {
     const maxDate = new Date(
