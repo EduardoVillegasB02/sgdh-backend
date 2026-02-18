@@ -37,6 +37,8 @@ import { BenefitedModule } from './modules/management/subprogram/pam/benefited/b
 import { DisabledModule } from './modules/management/subprogram/omaped/disabled/disabled.module';
 import { RecipientModule } from './modules/management/subprogram/pca/recipient/recipient.module';
 import { DependentModule } from './modules/management/subprogram/pvl/dependent/dependent.module';
+import { CensusModule } from './modules/management/subprogram/pantbc/census/census.module';
+import { PatientModule } from './modules/management/subprogram/pantbc/patient/patient.module';
 
 @Module({
   imports: [
@@ -78,6 +80,8 @@ import { DependentModule } from './modules/management/subprogram/pvl/dependent/d
     DisabledModule,
     RecipientModule,
     DependentModule,
+    CensusModule,
+    PatientModule,
   ],
   controllers: [AppController],
   providers: [AppService],
