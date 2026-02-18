@@ -7,7 +7,7 @@ datasource db {
   provider  = "postgresql"
   url       = env("DATABASE_URL")
   directUrl = env("DIRECT_URL")
-  schemas   = ["initial", "pam", "pca", "pvl", "omaped", "ule"]
+  schemas   = ["initial", "pam", "pantbc", "pca", "pvl", "omaped", "ule"]
 }
 
 // >> SCHEMA: initial
@@ -198,6 +198,61 @@ model User {
   audits                        Audit[]
   @@map("user")
   @@schema("initial")
+}
+
+// >> SCHEMA: OMAPED
+enum Degree {
+  MILD
+  MODERATE
+  PROCESS
+  OTHER
+  SEVERE
+  @@schema("omaped")
+}
+
+model Disabled {
+  id                            String                          @id @default(uuid())
+  name                          String
+  lastname                      String
+  doc_num                       String?
+  phone                         String?
+  address                       String?
+  certificate                   String?
+  diagnostic1                   String?
+  diagnostic2                   String?
+  folio                         String?
+  atention                      String?
+  cert_disc                     String?
+  beca                          String?
+  job_placement                 Boolean                         @default(false)
+  entrepreneurship              String?
+  therapy                       String?
+  therapy_schedule              String?
+  reniec                        String?
+  reniec_shift                  String?
+  fair                          String?
+  conadis                       String?
+  conadis_date                  String?
+  conadis_procedure             String?
+  conadis_validity              String?
+  unnamed                       String?
+  contigo                       String?
+  pc1000                        String?
+  fad                           String?
+  census_taker                  String?
+  state                         String?
+  commune                       String?
+  wheelchair                    String?
+  birthday                      DateTime?
+  registered_at                 DateTime?
+  change_at                     DateTime?
+  created_at                    DateTime                        @default(now())
+  updated_at                    DateTime                        @updatedAt
+  deleted_at                    DateTime?
+  degree                        Degree?
+  doc_type                      Doctype?
+  @@map("disabled")
+  @@schema("omaped")
 }
 
 // >> SCHEMA: PAM
@@ -455,6 +510,69 @@ model Province {
   @@schema("pam")
 }
 
+// >> SCHEMA: PANTBC
+enum Patientype {
+  ADMITTED
+  CONTINUED
+  NEW
+  OTHER
+  TRANSFERRED
+  @@schema("pantbc")
+}
+
+enum Sector {
+  ARMY
+  ESSALUD
+  MINSA
+  PNP
+  @@schema("pantbc")
+}
+
+model Census {
+  id                            String                          @id @default(uuid())
+  name                          String
+  created_at                    DateTime                        @default(now())
+  updated_at                    DateTime                        @updatedAt
+  deleted_at                    DateTime?
+  patients                      Patient[]
+  @@map("census")
+  @@schema("pantbc")
+}
+
+model Patient {
+  id                            String                          @id @default(uuid())
+  doc_num                       String
+  name                          String
+  lastname                      String
+  address                       String?
+  phone                         String?
+  center                        String?
+  delivery                      String?
+  treatment                     String
+  observation                   String?
+  assignee_doc_num              String?
+  assignee_lastname             String?
+  assignee_name                 String?
+  assignee_phone                String?
+  hampers                       Int                             @default(0)
+  nutritional_assessment        Boolean                         @default(false)
+  text_message                  Boolean                         @default(false)
+  start_at                      DateTime?
+  birthday                      DateTime?
+  assignee_birthday             DateTime?
+  created_at                    DateTime                        @default(now())
+  updated_at                    DateTime                        @updatedAt
+  deleted_at                    DateTime?
+  census_id                     String
+  doc_type                      Doctype
+  patient_type                  Patientype                      @default(OTHER)
+  sector                        Sector?
+  sex                           Sex
+  census                        Census                          @relation(fields: [census_id], references: [id])
+  @@map("patient")
+  @@schema("pantbc")
+}
+
 // >> SCHEMA: PCA
 enum Modality {
   CPOT
@@ -655,61 +773,6 @@ model Town {
   comittees                     Committee[]
   @@map("town")
   @@schema("pvl")
-}
-
-// >> SCHEMA: OMAPED
-enum Degree {
-  MILD
-  MODERATE
-  PROCESS
-  OTHER
-  SEVERE
-  @@schema("omaped")
-}
-
-model Disabled {
-  id                            String                          @id @default(uuid())
-  name                          String
-  lastname                      String
-  doc_num                       String?
-  phone                         String?
-  address                       String?
-  certificate                   String?
-  diagnostic1                   String?
-  diagnostic2                   String?
-  folio                         String?
-  atention                      String?
-  cert_disc                     String?
-  beca                          String?
-  job_placement                 Boolean                         @default(false)
-  entrepreneurship              String?
-  therapy                       String?
-  therapy_schedule              String?
-  reniec                        String?
-  reniec_shift                  String?
-  fair                          String?
-  conadis                       String?
-  conadis_date                  String?
-  conadis_procedure             String?
-  conadis_validity              String?
-  unnamed                       String?
-  contigo                       String?
-  pc1000                        String?
-  fad                           String?
-  census_taker                  String?
-  state                         String?
-  commune                       String?
-  wheelchair                    String?
-  birthday                      DateTime?
-  registered_at                 DateTime?
-  change_at                     DateTime?
-  created_at                    DateTime                        @default(now())
-  updated_at                    DateTime                        @updatedAt
-  deleted_at                    DateTime?
-  degree                        Degree?
-  doc_type                      Doctype?
-  @@map("disabled")
-  @@schema("omaped")
 }
 
 // >> SCHEME: ULE
