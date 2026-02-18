@@ -7,7 +7,7 @@ datasource db {
   provider  = "postgresql"
   url       = env("DATABASE_URL")
   directUrl = env("DIRECT_URL")
-  schemas   = ["initial", "pam", "pantbc", "pca", "pvl", "omaped", "ule"]
+  schemas   = ["initial", "pam", "pantbc", "pca", "pvl", "omaped", "recreation", "ule"]
 }
 
 // >> SCHEMA: initial
@@ -773,6 +773,35 @@ model Town {
   comittees                     Committee[]
   @@map("town")
   @@schema("pvl")
+}
+
+// >> SCHEMA: RECREATION
+model Participant {
+  id                            String                          @id @default(uuid())
+  lastname                      String
+  name                          String
+  dni                           String
+  phone                         String?
+  assignee                      String?
+  birthday                      DateTime?
+  created_at                    DateTime                        @default(now())
+  updated_at                    DateTime                        @updatedAt
+  deleted_at                    DateTime?
+  workshop_id                   String
+  workshop                      Workshop                        @relation(fields: [workshop_id], references: [id])
+  @@map("participant")
+  @@schema("recreation")
+}
+
+model Workshop {
+  id                            String                          @id @default(uuid())
+  name                          String
+  created_at                    DateTime                        @default(now())
+  updated_at                    DateTime                        @updatedAt
+  deleted_at                    DateTime?
+  participants                  Participant[]
+  @@map("workshop")
+  @@schema("recreation")
 }
 
 // >> SCHEME: ULE

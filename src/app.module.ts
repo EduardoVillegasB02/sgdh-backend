@@ -39,6 +39,8 @@ import { RecipientModule } from './modules/management/subprogram/pca/recipient/r
 import { DependentModule } from './modules/management/subprogram/pvl/dependent/dependent.module';
 import { CensusModule } from './modules/management/subprogram/pantbc/census/census.module';
 import { PatientModule } from './modules/management/subprogram/pantbc/patient/patient.module';
+import { WorkshopModule } from './modules/management/subservice/recreation/workshop/workshop.module';
+import { ParticipantModule } from './modules/management/subservice/recreation/participant/participant.module';
 
 @Module({
   imports: [
@@ -82,6 +84,8 @@ import { PatientModule } from './modules/management/subprogram/pantbc/patient/pa
     DependentModule,
     CensusModule,
     PatientModule,
+    WorkshopModule,
+    ParticipantModule,
   ],
   controllers: [AppController],
   providers: [AppService],
