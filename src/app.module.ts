@@ -41,6 +41,7 @@ import { CensusModule } from './modules/management/subprogram/pantbc/census/cens
 import { PatientModule } from './modules/management/subprogram/pantbc/patient/patient.module';
 import { WorkshopModule } from './modules/management/subservice/recreation/workshop/workshop.module';
 import { ParticipantModule } from './modules/management/subservice/recreation/participant/participant.module';
+import { MotherModule } from './modules/management/subservice/compromise/mother/mother.module';
 
 @Module({
   imports: [
@@ -86,6 +87,7 @@ import { ParticipantModule } from './modules/management/subservice/recreation/pa
     PatientModule,
     WorkshopModule,
     ParticipantModule,
+    MotherModule,
   ],
   controllers: [AppController],
   providers: [AppService],
