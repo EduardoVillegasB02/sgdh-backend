@@ -7,7 +7,7 @@ datasource db {
   provider  = "postgresql"
   url       = env("DATABASE_URL")
   directUrl = env("DIRECT_URL")
-  schemas   = ["initial", "pam", "pantbc", "pca", "pvl", "omaped", "recreation", "ule"]
+  schemas   = ["initial", "compromise", "pam", "pantbc", "pca", "pvl", "omaped", "recreation", "ule"]
 }
 
 // >> SCHEMA: initial
@@ -200,6 +200,22 @@ model User {
   @@schema("initial")
 }
 
+// >> SCHEMA: COMPROMISE
+model Mother {
+  id                            String                          @id @default(uuid())
+  name                          String
+  lastname                      String
+  doc_num                       String?
+  phone                         String?
+  birthday                      DateTime?
+  created_at                    DateTime                        @default(now())
+  updated_at                    DateTime                        @updatedAt
+  deleted_at                    DateTime?
+  doc_type                      Doctype?
+  @@map("mother")
+  @@schema("compromise")
+}
+
 // >> SCHEMA: OMAPED
 enum Degree {
   MILD
@@ -267,6 +283,7 @@ enum Civil {
 
 enum Doctype {
   CE
+  DIEXT
   DNI
   NOTEBOOK
   @@schema("pam")
