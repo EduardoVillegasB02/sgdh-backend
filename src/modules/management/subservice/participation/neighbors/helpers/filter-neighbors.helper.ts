@@ -16,7 +16,7 @@ export function filterNeighbors(dto: FilterNeighborsDto): any {
     where.OR = [
       { name: { contains: search, mode: 'insensitive' } },
       { lastname: { contains: search, mode: 'insensitive' } },
-      { doc_num: { contains: search, mode: 'insensitive' } },
+      { dni: { contains: search, mode: 'insensitive' } },
     ];
   if (charges) where.charges = charges;
   const today = new Date();
