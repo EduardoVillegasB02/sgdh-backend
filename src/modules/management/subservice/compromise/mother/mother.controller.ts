@@ -10,11 +10,7 @@ import {
   Query,
 } from '@nestjs/common';
 import { MotherService } from './mother.service';
-import {
-  CreateMotherDto,
-  FilterMotherDto,
-  UpdateMotherDto,
-} from './dto';
+import { CreateMotherDto, FilterMotherDto, UpdateMotherDto } from './dto';
 
 @Controller('compromise/mother')
 export class MotherController {
@@ -36,10 +32,7 @@ export class MotherController {
   }
 
   @Patch(':id')
-  update(
-    @Param('id', ParseUUIDPipe) id: string,
-    @Body() dto: UpdateMotherDto,
-  ) {
+  update(@Param('id', ParseUUIDPipe) id: string, @Body() dto: UpdateMotherDto) {
     return this.motherService.update(id, dto);
   }
 

@@ -42,6 +42,7 @@ import { PatientModule } from './modules/management/subprogram/pantbc/patient/pa
 import { WorkshopModule } from './modules/management/subservice/recreation/workshop/workshop.module';
 import { ParticipantModule } from './modules/management/subservice/recreation/participant/participant.module';
 import { MotherModule } from './modules/management/subservice/compromise/mother/mother.module';
+import { ProgramModule } from './modules/infrastructure/program/program.module';
 
 @Module({
   imports: [
@@ -88,6 +89,7 @@ import { MotherModule } from './modules/management/subservice/compromise/mother/
     WorkshopModule,
     ParticipantModule,
     MotherModule,
+    ProgramModule,
   ],
   controllers: [AppController],
   providers: [AppService],

@@ -1,10 +1,6 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { Mother } from '@prisma/client';
-import {
-  CreateMotherDto,
-  FilterMotherDto,
-  UpdateMotherDto,
-} from './dto';
+import { CreateMotherDto, FilterMotherDto, UpdateMotherDto } from './dto';
 import { PrismaService } from '../../../../../prisma/prisma.service';
 import {
   paginationHelper,
@@ -84,8 +80,7 @@ export class MotherService {
     const mother = await this.prisma.mother.findUnique({
       where: { id },
     });
-    if (!mother)
-      throw new BadRequestException('Madre no encontrada');
+    if (!mother) throw new BadRequestException('Madre no encontrada');
     if (mother.deleted_at && !toggle)
       throw new BadRequestException('Madre eliminada');
     return mother;
