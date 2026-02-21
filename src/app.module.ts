@@ -45,6 +45,7 @@ import { MotherModule } from './modules/management/subservice/compromise/mother/
 import { ChargesModule } from './modules/management/subservice/participation/charges/charges.module';
 import { ComunneModule } from './modules/management/subservice/participation/comunne/comunne.module';
 import { NeighborsModule } from './modules/management/subservice/participation/neighbors/neighbors.module';
+import { ProgramModule } from './modules/infrastructure/program/program.module';
 
 @Module({
   imports: [
@@ -94,6 +95,7 @@ import { NeighborsModule } from './modules/management/subservice/participation/n
     ChargesModule,
     ComunneModule,
     NeighborsModule,
+    ProgramModule,
   ],
   controllers: [AppController],
   providers: [AppService],
