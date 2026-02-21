@@ -42,6 +42,9 @@ import { PatientModule } from './modules/management/subprogram/pantbc/patient/pa
 import { WorkshopModule } from './modules/management/subservice/recreation/workshop/workshop.module';
 import { ParticipantModule } from './modules/management/subservice/recreation/participant/participant.module';
 import { MotherModule } from './modules/management/subservice/compromise/mother/mother.module';
+import { ChargesModule } from './modules/management/subservice/participation/charges/charges.module';
+import { ComunneModule } from './modules/management/subservice/participation/comunne/comunne.module';
+import { NeighborsModule } from './modules/management/subservice/participation/neighbors/neighbors.module';
 
 @Module({
   imports: [
@@ -88,6 +91,9 @@ import { MotherModule } from './modules/management/subservice/compromise/mother/
     WorkshopModule,
     ParticipantModule,
     MotherModule,
+    ChargesModule,
+    ComunneModule,
+    NeighborsModule,
   ],
   controllers: [AppController],
   providers: [AppService],
