@@ -1,14 +1,24 @@
-import { FilterMotherDto } from '../dto';
+import { FilterNeighborsDto } from '../dto';
 
-export function filterMother(dto: FilterMotherDto): any {
-  const { search, age, age_min, age_max, birthday, month, ...pagination } = dto;
+export function filterNeighbors(dto: FilterNeighborsDto): any {
+  const {
+    search,
+    charges,
+    age,
+    age_min,
+    age_max,
+    birthday,
+    month,
+    ...pagination
+  } = dto;
   const where: any = { deleted_at: null };
   if (search)
     where.OR = [
       { name: { contains: search, mode: 'insensitive' } },
       { lastname: { contains: search, mode: 'insensitive' } },
-      { doc_num: { contains: search, mode: 'insensitive' } },
+      { dni: { contains: search, mode: 'insensitive' } },
     ];
+  if (charges) where.charges = charges;
   const today = new Date();
   if (age) {
     const maxDate = new Date(
@@ -51,13 +61,14 @@ export function filterMother(dto: FilterMotherDto): any {
     const m = Number(monthStr) - 1;
     const d = Number(dayStr);
     const ranges: any[] = [];
-    for (let year = 1900; year <= 2100; year++)
+    for (let year = 1900; year <= 2100; year++) {
       ranges.push({
         birthday: {
           gte: new Date(Date.UTC(year, m, d, 0, 0, 0)),
           lte: new Date(Date.UTC(year, m, d, 23, 59, 59)),
         },
       });
+    }
     where.AND = [...(where.AND || []), { OR: ranges }];
   }
   if (month) {

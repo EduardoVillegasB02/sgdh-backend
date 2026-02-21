@@ -1,42 +1,18 @@
-import {
-  Controller,
-  Get,
-  Post,
-  Body,
-  Patch,
-  Param,
-  Delete,
-} from '@nestjs/common';
+import { Controller, Get, Param, ParseUUIDPipe, Query } from '@nestjs/common';
 import { ModuleService } from './module.service';
-import { CreateModuleDto } from './dto/create-module.dto';
-import { UpdateModuleDto } from './dto/update-module.dto';
+import { FilterModuleDto } from './dto';
 
 @Controller('module')
 export class ModuleController {
-  constructor(private readonly moduleService: ModuleService) {}
-
-  @Post()
-  create(@Body() createModuleDto: CreateModuleDto) {
-    return this.moduleService.create(createModuleDto);
-  }
+  constructor(private readonly ModuleService: ModuleService) {}
 
   @Get()
-  findAll() {
-    return this.moduleService.findAll();
+  findAll(@Query() dto: FilterModuleDto) {
+    return this.ModuleService.findAll(dto);
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.moduleService.findOne(+id);
-  }
-
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateModuleDto: UpdateModuleDto) {
-    return this.moduleService.update(+id, updateModuleDto);
-  }
-
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.moduleService.remove(+id);
+  findOne(@Param('id', ParseUUIDPipe) id: string) {
+    return this.ModuleService.findOne(id);
   }
 }
