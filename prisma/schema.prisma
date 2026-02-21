@@ -7,7 +7,7 @@ datasource db {
   provider  = "postgresql"
   url       = env("DATABASE_URL")
   directUrl = env("DIRECT_URL")
-  schemas   = ["initial", "compromise", "pam", "pantbc", "pca", "pvl", "omaped", "recreation", "ule"]
+  schemas   = ["initial", "compromise", "pam", "pantbc", "pca", "pvl", "omaped", "recreation", "ule", "participation"]
 }
 
 // >> SCHEMA: initial
@@ -588,6 +588,48 @@ model Patient {
   census                        Census                          @relation(fields: [census_id], references: [id])
   @@map("patient")
   @@schema("pantbc")
+}
+
+// >> SCHEMA: PARTICIPATION
+model Charges {
+  id                            String                          @id @default(uuid())
+  name                          String                          @unique
+  created_at                    DateTime                        @default(now())
+  updated_at                    DateTime                        @updatedAt
+  deleted_at                    DateTime?
+  neighbors                     Neighbors[]
+  @@map("charges")
+  @@schema("participation")
+}
+
+model Comunne {
+  id                            String                          @id @default(uuid())
+  name                          String                          @unique
+  created_at                    DateTime                        @default(now())
+  updated_at                    DateTime                        @updatedAt
+  deleted_at                    DateTime?
+  neighbors                     Neighbors[]
+  @@map("comunne")
+  @@schema("participation")
+}
+
+model Neighbors {
+  id                            String                          @id @default(uuid())
+  name                          String
+  lastname                      String
+  dni                           String                          @unique
+  phone                         String?
+  birthday                      DateTime?
+  pueblo                        String
+  charges_id                    String
+  comunne_id                    String
+  created_at                    DateTime                        @default(now())
+  updated_at                    DateTime                        @updatedAt
+  deleted_at                    DateTime?
+  charges     Charges    @relation(fields: [charges_id], references: [id])
+  comunne     Comunne    @relation(fields: [comunne_id], references: [id])
+  @@map("neighbors")
+  @@schema("participation")
 }
 
 // >> SCHEMA: PCA
