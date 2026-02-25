@@ -26,6 +26,7 @@ export function filterBenefited(dto: FilterBenefitedDto): any {
     age,
     age_min,
     age_max,
+    phone,
     ...pagination
   } = dto;
   const where: any = { deleted_at: null };
@@ -115,6 +116,28 @@ export function filterBenefited(dto: FilterBenefitedDto): any {
         },
       });
     where.AND = [...(where.AND || []), { OR: ranges }];
+  }
+  if (phone === true) {
+    where.AND = [
+      ...(where.AND || []),
+      {
+        NOT: [
+          { cellphone: null },
+          { cellphone: '' },
+        ],
+      },
+    ];
+  }
+  if (phone === false) {
+    where.AND = [
+      ...(where.AND || []),
+      {
+        OR: [
+          { cellphone: null },
+          { cellphone: '' },
+        ],
+      },
+    ];
   }
   return {
     where,

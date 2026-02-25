@@ -1,5 +1,6 @@
 import { Format, Level } from '@prisma/client';
 import {
+  IsBoolean,
   IsDateString,
   IsEnum,
   IsOptional,
@@ -7,6 +8,7 @@ import {
   IsUUID,
 } from 'class-validator';
 import { SearchDto } from '../../../../../../common/dto';
+import { Transform } from 'class-transformer';
 
 export class FilterRegisteredDto extends SearchDto {
   @IsOptional()
@@ -59,4 +61,9 @@ export class FilterRegisteredDto extends SearchDto {
   @IsOptional()
   @IsString()
   birthday_month?: string;
+
+  @IsOptional()
+  @Transform(({ value }) => value === 'true')
+  @IsBoolean()
+  phone?: boolean;
 }

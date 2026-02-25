@@ -17,6 +17,7 @@ export function filterRegistered(dto: FilterRegisteredDto): any {
     age,
     birthday_day,
     birthday_month,
+    phone,
     ...pagination
   } = dto;
   const where: any = { deleted_at: null };
@@ -102,6 +103,28 @@ export function filterRegistered(dto: FilterRegisteredDto): any {
         },
       });
     where.AND = [...(where.AND || []), { OR: ranges }];
+  }
+  if (phone === true) {
+    where.AND = [
+      ...(where.AND || []),
+      {
+        NOT: [
+          { phone: null },
+          { phone: '' },
+        ],
+      },
+    ];
+  }
+  if (phone === false) {
+    where.AND = [
+      ...(where.AND || []),
+      {
+        OR: [
+          { phone: null },
+          { phone: '' },
+        ],
+      },
+    ];
   }
   return {
     where,
