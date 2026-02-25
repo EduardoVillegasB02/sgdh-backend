@@ -1,6 +1,7 @@
 import { Modality, Sex, Social } from '@prisma/client';
-import { IsEnum, IsOptional, IsString } from 'class-validator';
+import { IsBoolean, IsEnum, IsOptional, IsString } from 'class-validator';
 import { SearchDto } from '../../../../../../common/dto';
+import { Transform } from 'class-transformer';
 
 export class FilterRecipientDto extends SearchDto {
   @IsOptional()
@@ -34,4 +35,9 @@ export class FilterRecipientDto extends SearchDto {
   @IsOptional()
   @IsEnum(Social)
   social?: Social;
+
+  @IsOptional()
+  @Transform(({ value }) => value === 'true')
+  @IsBoolean()
+  phone?: boolean;
 }
