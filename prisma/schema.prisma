@@ -16,7 +16,6 @@ enum Ability {
   READ
   UPDATE
   DELETE
-  ASSIGN
   @@schema("initial")
 }
 
@@ -29,19 +28,6 @@ enum Action {
   LOGOUT
   RESTORE
   UPDATE
-  @@schema("initial")
-}
-
-enum Model {
-  initial
-  @@schema("initial")
-}
-
-enum Resource {
-  BENEFICIARY
-  INCIDENCE
-  USER
-  REPORT
   @@schema("initial")
 }
 
@@ -62,10 +48,11 @@ enum Status {
 
 model Access {
   id                            String                          @id @default(uuid())
+  created_at                    DateTime                        @default(now())
+  updated_at                    DateTime                        @updatedAt
+  deleted_at                    DateTime?
   permission_id                 String
   role_id                       String
-  created_at                    DateTime                        @default(now())
-  deleted_at                    DateTime?
   permission                    Permission                      @relation(fields: [permission_id], references: [id])
   role                          Role                            @relation(fields: [role_id], references: [id])
   @@unique([permission_id, role_id])
@@ -75,14 +62,15 @@ model Access {
 
 model Assignment {
   id                            String                          @id @default(uuid())
+  created_at                    DateTime                        @default(now())
+  updated_at                    DateTime                        @updatedAt
+  deleted_at                    DateTime?
   module_id                     String?
-  program_id                    String
+  program_id                    String?
   role_id                       String
   user_id                       String
-  created_at                    DateTime                        @default(now())
-  deleted_at                    DateTime?
   module                        Module?                         @relation(fields: [module_id], references: [id])
-  program                       Program                         @relation(fields: [program_id], references: [id])
+  program                       Program?                        @relation(fields: [program_id], references: [id])
   role                          Role                            @relation(fields: [role_id], references: [id])
   user                          User                            @relation(fields: [user_id], references: [id])
   @@unique([module_id, program_id, role_id, user_id])
@@ -99,13 +87,12 @@ model Audit {
   new_content                   String?
   user_id                       String?
   created_at                    DateTime                        @default(now())
+  updated_at                    DateTime                        @updatedAt
   deleted_at                    DateTime?
   action                        Action
-  model                         Model
   status                        Status                          @default(SUCCESS)
   user                          User?                           @relation(fields: [user_id], references: [id])
   @@index([action])
-  @@index([model])
   @@index([status])
   @@index([user_id])
   @@map("audit")
@@ -137,10 +124,12 @@ model Module {
   name                          String                          @unique
   program_id                    String
   created_at                    DateTime                        @default(now())
+  updated_at                    DateTime                        @updatedAt
   deleted_at                    DateTime?
   program                       Program                         @relation(fields: [program_id], references: [id])
   assignments                   Assignment[]
   general                       General[]
+  permissions                   Permission[]
   @@index([program_id])
   @@unique([name, program_id])
   @@map("module")
@@ -150,11 +139,13 @@ model Module {
 model Permission {
   id                            String                          @id @default(uuid())
   created_at                    DateTime                        @default(now())
+  updated_at                    DateTime                        @updatedAt
   deleted_at                    DateTime?
-  action                        Ability
-  resource                      Resource
-  accesses                      Access[]   
-  @@unique([action, resource])
+  module_id                     String
+  ability                       Ability
+  module                        Module                          @relation(fields: [module_id], references: [id])
+  accesses                      Access[]
+  @@unique([ability, module_id])
   @@map("permission")
   @@schema("initial")
 }
@@ -163,6 +154,7 @@ model Program {
   id                            String                          @id @default(uuid())
   name                          String                          @unique
   created_at                    DateTime                        @default(now())
+  updated_at                    DateTime                        @updatedAt
   deleted_at                    DateTime?
   assignments                   Assignment[]
   modules                       Module[]
@@ -175,6 +167,7 @@ model Role {
   name                          String                          @unique
   is_super                      Boolean                         @default(false)
   created_at                    DateTime                        @default(now())
+  updated_at                    DateTime                        @updatedAt
   deleted_at                    DateTime?
   accesses                      Access[]  
   assignments                   Assignment[]
