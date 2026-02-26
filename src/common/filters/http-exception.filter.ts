@@ -9,7 +9,7 @@ import {
   UnauthorizedException,
 } from '@nestjs/common';
 import { HttpAdapterHost } from '@nestjs/core';
-import { Action, Model, Status } from '@prisma/client';
+import { Action, Status } from '@prisma/client';
 import { Request } from 'express';
 import { AuditService } from '../../modules/audit/audit.service';
 
@@ -38,10 +38,10 @@ export class AllExceptionsFilter implements ExceptionFilter {
     const params = req.params;
     const baseUrl = req.baseUrl || req.url;
     const user_id = req.user ? req.user.user_id : null;
-    const modelKey = Object.keys(Model).find((m) =>
+    /* const modelKey = Object.keys(Model).find((m) =>
       baseUrl.toUpperCase().includes(m),
-    ) as Model | undefined;
-    const model = modelKey;
+    ) as Model | undefined; */
+    /* const model = modelKey; */
     const action =
       method === 'POST'
         ? Action.CREATE
