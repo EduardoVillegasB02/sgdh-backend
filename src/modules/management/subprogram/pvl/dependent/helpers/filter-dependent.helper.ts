@@ -9,6 +9,7 @@ export function filterDependent(dto: FilterDependentDto): any {
     age_max,
     birthday,
     month,
+    phone,
     ...pagination
   } = dto;
   const where: any = { deleted_at: null };
@@ -82,6 +83,28 @@ export function filterDependent(dto: FilterDependentDto): any {
         },
       });
     where.AND = [...(where.AND || []), { OR: ranges }];
+  }
+  if (phone === true) {
+    where.AND = [
+      ...(where.AND || []),
+      {
+        NOT: [
+          { phone: null },
+          { phone: '' },
+        ],
+      },
+    ];
+  }
+  if (phone === false) {
+    where.AND = [
+      ...(where.AND || []),
+      {
+        OR: [
+          { phone: null },
+          { phone: '' },
+        ],
+      },
+    ];
   }
   return {
     where,

@@ -1,6 +1,7 @@
-import { IsOptional, IsString, IsUUID } from 'class-validator';
+import { IsBoolean, IsOptional, IsString, IsUUID } from 'class-validator';
 import { SearchDto } from '../../../../../../common/dto';
 import { Charges } from '@prisma/client';
+import { Transform } from 'class-transformer';
 
 export class FilterNeighborsDto extends SearchDto {
   @IsOptional()
@@ -26,4 +27,9 @@ export class FilterNeighborsDto extends SearchDto {
   @IsOptional()
   @IsString()
   birthday?: string;
+
+  @IsOptional()
+  @Transform(({ value }) => value === 'true')
+  @IsBoolean()
+  phone?: boolean;
 }

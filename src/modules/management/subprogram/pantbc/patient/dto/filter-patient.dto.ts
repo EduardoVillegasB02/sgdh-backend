@@ -1,6 +1,7 @@
 import { Patientype, Sex } from '@prisma/client';
-import { IsEnum, IsOptional, IsString, IsUUID } from 'class-validator';
+import { IsBoolean, IsEnum, IsOptional, IsString, IsUUID } from 'class-validator';
 import { SearchDto } from '../../../../../../common/dto';
+import { Transform } from 'class-transformer';
 
 export class FilterPatientDto extends SearchDto {
   @IsOptional()
@@ -34,4 +35,9 @@ export class FilterPatientDto extends SearchDto {
   @IsOptional()
   @IsString()
   birthday?: string;
+
+  @IsOptional()
+  @Transform(({ value }) => value === 'true')
+  @IsBoolean()
+  phone?: boolean;
 }
