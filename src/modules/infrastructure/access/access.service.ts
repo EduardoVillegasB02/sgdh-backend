@@ -1,26 +1,98 @@
-import { Injectable } from '@nestjs/common';
-import { CreateAccessDto } from './dto/create-access.dto';
-import { UpdateAccessDto } from './dto/update-access.dto';
+import { BadRequestException, Injectable } from '@nestjs/common';
+import { Access } from '@prisma/client';
+import { CreateAccessDto, UpdateAccessDto } from './dto';
+import { PrismaService } from '../../../prisma/prisma.service';
+import { paginationHelper, timezoneHelper } from '../../../common/helpers';
+import { SearchDto } from '../../../common/dto';
 
 @Injectable()
 export class AccessService {
-  create(createAccessDto: CreateAccessDto) {
-    return 'This action adds a new access';
+  constructor(private readonly prisma: PrismaService) {}
+
+  async create(dto: CreateAccessDto): Promise<Access> {
+    const access = await this.prisma.access.create({
+      data: {
+        ...dto,
+        created_at: timezoneHelper(),
+        updated_at: timezoneHelper(),
+      },
+    });
+    return await this.getAccessById(access.id);
   }
 
-  findAll() {
-    return `This action returns all access`;
+  async findAll(dto: SearchDto): Promise<any> {
+    const { search, ...pagination } = dto;
+    const where: any = { deleted_at: null };
+    if (search) where.name = String(search);
+    return paginationHelper(
+      this.prisma.access,
+      {
+        where,
+        orderBy: { role_id: 'asc' },
+        select: {
+          id: true,
+          created_at: true,
+          updated_at: true,
+          deleted_at: true,
+          permission: true,
+          role: true,
+        },
+      },
+      pagination,
+    );
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} access`;
+  async findOne(id: string): Promise<Access> {
+    return await this.getAccessById(id);
   }
 
-  update(id: number, updateAccessDto: UpdateAccessDto) {
-    return `This action updates a #${id} access`;
+  async update(id: string, dto: UpdateAccessDto): Promise<Access> {
+    await this.getAccessById(id);
+    await this.prisma.access.update({
+      data: {
+        ...dto,
+        updated_at: timezoneHelper(),
+      },
+      where: { id },
+    });
+    return await this.getAccessById(id);
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} access`;
+  async toggleDelete(id: string): Promise<any> {
+    const access = await this.getAccessById(id, true);
+    const inactive = access.deleted_at;
+    const deleted_at = inactive ? null : timezoneHelper();
+    await this.prisma.access.update({
+      data: {
+        updated_at: timezoneHelper(),
+        deleted_at,
+      },
+      where: { id },
+    });
+    return {
+      action: inactive ? 'Restore' : 'Delete',
+      id,
+    };
+  }
+
+  private async getAccessById(
+    id: string,
+    toogle: boolean = false,
+  ): Promise<any> {
+    const access = await this.prisma.access.findUnique({
+      where: { id },
+      select: {
+        id: true,
+        created_at: true,
+        updated_at: true,
+        deleted_at: true,
+        permission: true,
+        role: true,
+      },
+    });
+    if (!access) throw new BadRequestException('Rol-Permiso no encontrado');
+    if (access.deleted_at && !toogle)
+      throw new BadRequestException('Rol-Permiso eliminado');
+    return access;
   }
 }

@@ -6,40 +6,42 @@ import {
   Patch,
   Param,
   Delete,
+  ParseUUIDPipe,
+  Query,
 } from '@nestjs/common';
 import { AssignmentService } from './assignment.service';
-import { CreateAssignmentDto } from './dto/create-assignment.dto';
-import { UpdateAssignmentDto } from './dto/update-assignment.dto';
+import { CreateAssignmentDto, UpdateAssignmentDto } from './dto';
+import { SearchDto } from '../../../common/dto';
 
-@Controller('assignment')
+@Controller('initial/assignment')
 export class AssignmentController {
   constructor(private readonly assignmentService: AssignmentService) {}
 
-  @Post()
-  create(@Body() createAssignmentDto: CreateAssignmentDto) {
-    return this.assignmentService.create(createAssignmentDto);
-  }
-
   @Get()
-  findAll() {
-    return this.assignmentService.findAll();
+  findAll(@Query() dto: SearchDto) {
+    return this.assignmentService.findAll(dto);
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.assignmentService.findOne(+id);
+  findOne(@Param('id', ParseUUIDPipe) id: string) {
+    return this.assignmentService.findOne(id);
+  }
+
+  @Post()
+  create(@Body() dto: CreateAssignmentDto) {
+    return this.assignmentService.create(dto);
   }
 
   @Patch(':id')
   update(
-    @Param('id') id: string,
-    @Body() updateAssignmentDto: UpdateAssignmentDto,
+    @Param('id', ParseUUIDPipe) id: string,
+    @Body() dto: UpdateAssignmentDto,
   ) {
-    return this.assignmentService.update(+id, updateAssignmentDto);
+    return this.assignmentService.update(id, dto);
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.assignmentService.remove(+id);
+  toggleDelete(@Param('id', ParseUUIDPipe) id: string) {
+    return this.assignmentService.toggleDelete(id);
   }
 }

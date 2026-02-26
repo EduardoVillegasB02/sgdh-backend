@@ -6,37 +6,42 @@ import {
   Patch,
   Param,
   Delete,
+  ParseUUIDPipe,
+  Query,
 } from '@nestjs/common';
 import { AccessService } from './access.service';
-import { CreateAccessDto } from './dto/create-access.dto';
-import { UpdateAccessDto } from './dto/update-access.dto';
+import { CreateAccessDto, UpdateAccessDto } from './dto';
+import { SearchDto } from '../../../common/dto';
 
-@Controller('access')
+@Controller('initial/access')
 export class AccessController {
   constructor(private readonly accessService: AccessService) {}
 
-  @Post()
-  create(@Body() createAccessDto: CreateAccessDto) {
-    return this.accessService.create(createAccessDto);
-  }
-
   @Get()
-  findAll() {
-    return this.accessService.findAll();
+  findAll(@Query() dto: SearchDto) {
+    return this.accessService.findAll(dto);
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.accessService.findOne(+id);
+  findOne(@Param('id', ParseUUIDPipe) id: string) {
+    return this.accessService.findOne(id);
+  }
+
+  @Post()
+  create(@Body() dto: CreateAccessDto) {
+    return this.accessService.create(dto);
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateAccessDto: UpdateAccessDto) {
-    return this.accessService.update(+id, updateAccessDto);
+  update(
+    @Param('id', ParseUUIDPipe) id: string,
+    @Body() dto: UpdateAccessDto,
+  ) {
+    return this.accessService.update(id, dto);
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.accessService.remove(+id);
+  toggleDelete(@Param('id', ParseUUIDPipe) id: string) {
+    return this.accessService.toggleDelete(id);
   }
 }

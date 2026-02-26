@@ -7,8 +7,9 @@ import {
   Mode,
   Sex,
 } from '@prisma/client';
-import { IsEnum, IsOptional, IsUUID } from 'class-validator';
+import { IsBoolean, IsEnum, IsOptional, IsUUID } from 'class-validator';
 import { SearchDto } from '../../../../../../common/dto';
+import { Transform } from 'class-transformer';
 
 export class FilterBenefitedDto extends SearchDto {
   @IsOptional()
@@ -97,4 +98,9 @@ export class FilterBenefitedDto extends SearchDto {
 
   @IsOptional()
   birthday?: string;
+
+  @IsOptional()
+  @Transform(({ value }) => value === 'true')
+  @IsBoolean()
+  phone?: boolean;
 }

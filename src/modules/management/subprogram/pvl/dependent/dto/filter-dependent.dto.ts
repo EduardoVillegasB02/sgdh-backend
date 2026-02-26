@@ -1,5 +1,6 @@
-import { IsOptional, IsString } from 'class-validator';
+import { IsBoolean, IsOptional, IsString } from 'class-validator';
 import { SearchDto } from '../../../../../../common/dto';
+import { Transform } from 'class-transformer';
 
 export class FilterDependentDto extends SearchDto {
   @IsOptional()
@@ -25,4 +26,9 @@ export class FilterDependentDto extends SearchDto {
   @IsOptional()
   @IsString()
   birthday?: string;
+
+  @IsOptional()
+  @Transform(({ value }) => value === 'true')
+  @IsBoolean()
+  phone?: boolean;
 }

@@ -1,7 +1,7 @@
 import { FilterMotherDto } from '../dto';
 
 export function filterMother(dto: FilterMotherDto): any {
-  const { search, age, age_min, age_max, birthday, month, ...pagination } = dto;
+  const { search, age, age_min, age_max, birthday, month, phone, ...pagination } = dto;
   const where: any = { deleted_at: null };
   if (search)
     where.OR = [
@@ -71,6 +71,28 @@ export function filterMother(dto: FilterMotherDto): any {
         },
       });
     where.AND = [...(where.AND || []), { OR: ranges }];
+  }
+  if (phone === true) {
+    where.AND = [
+      ...(where.AND || []),
+      {
+        NOT: [
+          { phone: null },
+          { phone: '' },
+        ],
+      },
+    ];
+  }
+  if (phone === false) {
+    where.AND = [
+      ...(where.AND || []),
+      {
+        OR: [
+          { phone: null },
+          { phone: '' },
+        ],
+      },
+    ];
   }
   return {
     where,
