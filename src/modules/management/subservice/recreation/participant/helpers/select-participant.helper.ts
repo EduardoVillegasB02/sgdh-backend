@@ -10,6 +10,7 @@ export function selectParticipant(
       name: true,
       lastname: true,
       phone: true,
+      sex: true,
       birthday: true,
       workshop: { select: { id: true, name: true } },
     };
@@ -19,6 +20,7 @@ export function selectParticipant(
     name: true,
     lastname: true,
     phone: true,
+    sex: true,
     assignee: true,
     birthday: true,
     created_at: true,

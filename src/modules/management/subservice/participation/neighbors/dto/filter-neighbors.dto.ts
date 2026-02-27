@@ -1,12 +1,16 @@
-import { IsBoolean, IsOptional, IsString, IsUUID } from 'class-validator';
+import { IsBoolean, IsEnum, IsOptional, IsString, IsUUID } from 'class-validator';
 import { SearchDto } from '../../../../../../common/dto';
-import { Charges } from '@prisma/client';
+import { Charges, Sex } from '@prisma/client';
 import { Transform } from 'class-transformer';
 
 export class FilterNeighborsDto extends SearchDto {
   @IsOptional()
   @IsUUID()
   charges?: string;
+
+  @IsOptional()
+  @IsEnum(Sex)
+  sex?: Sex;
 
   @IsOptional()
   @IsString()

@@ -10,6 +10,8 @@ export function filterGeneral(dto: FilterGeneralDto): any {
     age_min,
     age_max,
     phone,
+    sex,
+    program_id,
     ...pagination
   } = dto;
   const where: any = { deleted_at: null };
@@ -27,6 +29,13 @@ export function filterGeneral(dto: FilterGeneralDto): any {
       },
     };
   const today = new Date();
+  if (program_id) {
+    where.module = {
+      program: {
+        id: program_id,
+      },
+    };
+  }
   if (age) {
     const maxDate = new Date(
       today.getFullYear() - Number(age),
@@ -110,6 +119,9 @@ export function filterGeneral(dto: FilterGeneralDto): any {
         ],
       },
     ];
+  }
+  if (sex) {
+  where.sex = sex;
   }
   return {
     where,

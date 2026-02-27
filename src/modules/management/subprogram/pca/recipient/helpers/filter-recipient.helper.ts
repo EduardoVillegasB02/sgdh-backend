@@ -112,6 +112,9 @@ export function filterRecipient(dto: FilterRecipientDto): any {
       },
     ];
   }
+  if (sex) {
+  where.sex = sex;
+  }
   return {
     where,
     pagination: { ...pagination },
