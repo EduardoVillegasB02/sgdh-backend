@@ -110,6 +110,9 @@ export function filterPatient(dto: FilterPatientDto): any {
       },
     ];
   }
+  if (sex) {
+  where.sex = sex;
+  }
   return {
     where,
     pagination: { ...pagination },

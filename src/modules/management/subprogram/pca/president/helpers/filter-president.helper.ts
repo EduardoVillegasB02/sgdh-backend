@@ -10,6 +10,7 @@ export function filterPresident(dto: FilterPresidentDto): any {
     age_min,
     age_max,
     phone,
+    sex,
     ...pagination
   } = dto;
   const where: any = { deleted_at: null };
@@ -109,6 +110,9 @@ export function filterPresident(dto: FilterPresidentDto): any {
         ],
       },
     ];
+  }
+  if (sex) {
+  where.sex = sex;
   }
   return {
     where,

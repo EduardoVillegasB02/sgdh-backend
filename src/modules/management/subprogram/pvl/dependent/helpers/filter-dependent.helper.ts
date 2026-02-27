@@ -10,6 +10,7 @@ export function filterDependent(dto: FilterDependentDto): any {
     birthday,
     month,
     phone,
+    sex,
     ...pagination
   } = dto;
   const where: any = { deleted_at: null };
@@ -105,6 +106,9 @@ export function filterDependent(dto: FilterDependentDto): any {
         ],
       },
     ];
+  }
+  if (sex) {
+  where.sex = sex;
   }
   return {
     where,

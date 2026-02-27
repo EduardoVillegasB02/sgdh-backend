@@ -1,4 +1,4 @@
-import { Format, Level } from '@prisma/client';
+import { Format, Level, Sex } from '@prisma/client';
 import {
   IsBoolean,
   IsDateString,
@@ -18,6 +18,10 @@ export class FilterRegisteredDto extends SearchDto {
   @IsOptional()
   @IsEnum(Level)
   level?: Level;
+
+  @IsOptional()
+  @IsEnum(Sex)
+  sex?: Sex;
 
   @IsOptional()
   @IsUUID()

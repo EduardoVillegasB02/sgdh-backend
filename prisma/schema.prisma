@@ -109,6 +109,7 @@ model General {
   sex                           Sex?
   message                       String?
   answer                        String?
+  observation                   String?
   citizen_id                    String
   module_id                     String
   created_at                    DateTime                        @default(now())
