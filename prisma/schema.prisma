@@ -563,7 +563,6 @@ model Patient {
   center                        String?
   delivery                      String?
   treatment                     String
-  observation                   String?
   assignee_doc_num              String?
   assignee_lastname             String?
   assignee_name                 String?
@@ -752,7 +751,6 @@ model Committee {
   members                       Int                             @default(0)
   handicappeds                  Int                             @default(0)
   commune                       String?
-  observation                   String?
   coordinator_id                String
   couple_id                     String
   town_id                       String
@@ -803,7 +801,6 @@ model Dependent {
   phone                         String?
   sex                           Sex?
   bond                          String?
-  observation                   String?
   semester_leave                String?
   priority                      Int?
   pregnant_weeks                Int?

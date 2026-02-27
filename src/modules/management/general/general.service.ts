@@ -16,13 +16,21 @@ export class GeneralService {
       {
         where,
         orderBy: { lastname: 'asc' },
-        include: {
-          module: {
-            select: {
-              name: true,
-            },
+        select: {
+        id: true,
+        name: true,
+        lastname: true,
+        dni: true,
+        phone: true,
+        birthday: true,
+        sex: true,
+        observation: true,
+        module: {
+          select: {
+            name: true,
           },
         },
+      }
       },
       pagination,
     );
@@ -83,5 +91,31 @@ export class GeneralService {
     });
     if (!citizen) throw new BadRequestException('Persona no encontrada');
     return citizen;
+  }
+  
+async updateObservation(citizen_id: string, observation: string) {
+  const result = await this.prisma.general.updateMany({
+    where: {
+      citizen_id,
+      deleted_at: null,
+    },
+    data: {
+      observation,
+      updated_at: timezoneHelper(),
+    },
+  });
+  if (result.count === 0) {
+    throw new BadRequestException('No se encontró el registro en general');
+  }
+    await this.prisma.patient.update({
+      where: {
+        id: citizen_id,
+      },
+      data: {
+        observation,
+        updated_at: timezoneHelper(),
+      },
+    });
+    return { success: true };
   }
 }

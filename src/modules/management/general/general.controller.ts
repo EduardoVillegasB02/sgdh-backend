@@ -20,4 +20,12 @@ export class GeneralController {
   sendanswer(@Param('id') id: string, @Body() dto: { answer: string }) {
     return this.generalService.answerMessage(id, dto.answer);
   }
+
+  @Patch('observation')
+  updateObservation(
+  @Body('citizen_id') citizen_id: string,
+  @Body('observation') observation: string,
+) {
+  return this.generalService.updateObservation(citizen_id, observation);
+}
 }

@@ -1,5 +1,6 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { Patient } from '@prisma/client';
+import { GeneralService } from 'src/modules/management/general/general.service';
 import { CreatePatientDto, FilterPatientDto, UpdatePatientDto } from './dto';
 import { PrismaService } from '../../../../../prisma/prisma.service';
 import {
@@ -11,8 +12,9 @@ import { filterPatient, selectPatient } from './helpers';
 
 @Injectable()
 export class PatientService {
-  constructor(private readonly prisma: PrismaService) {}
-
+  constructor(private readonly prisma: PrismaService,
+    private readonly generalservice: GeneralService) 
+  {}
   async create(dto: CreatePatientDto): Promise<Patient> {
     const { start_at, birthday, assignee_birthday, ...res } = dto;
     const patient = await this.prisma.patient.create({
@@ -32,7 +34,7 @@ export class PatientService {
 
   async findAll(dto: FilterPatientDto): Promise<any> {
     const { where, pagination } = filterPatient(dto);
-    return paginationHelper(
+    const result = await paginationHelper(
       this.prisma.patient,
       {
         where,
@@ -41,6 +43,25 @@ export class PatientService {
       },
       pagination,
     );
+    const ids = result.data.map((item) => item.id);
+    const generals = await this.prisma.general.findMany({
+      where: {
+        citizen_id: { in: ids },
+        deleted_at: null,
+      },
+      select: {
+        citizen_id: true,
+        observation: true,
+      },
+    });
+    const generalMap = new Map(
+      generals.map((g) => [g.citizen_id, g.observation]),
+    );
+    result.data = result.data.map((item) => ({
+      ...item,
+      observation: generalMap.get(item.id) || null,
+    }));
+    return result;
   }
 
   async findOne(id: string): Promise<Patient> {
@@ -48,22 +69,34 @@ export class PatientService {
   }
 
   async update(id: string, dto: UpdatePatientDto): Promise<Patient> {
-    await this.getPatientById(id);
-    const { start_at, birthday, assignee_birthday, ...res } = dto;
-    await this.prisma.patient.update({
-      data: {
-        ...res,
-        ...(start_at && { start_at: parseDate(start_at) }),
-        ...(birthday && { birthday: parseDate(birthday) }),
-        ...(assignee_birthday && {
-          assignee_birthday: parseDate(assignee_birthday),
-        }),
-        updated_at: timezoneHelper(),
+  await this.getPatientById(id);
+  const { start_at, birthday, assignee_birthday, observation, ...res } = dto;
+  await this.prisma.patient.update({
+    data: {
+      ...res,
+      ...(start_at && { start_at: parseDate(start_at) }),
+      ...(birthday && { birthday: parseDate(birthday) }),
+      ...(assignee_birthday && {
+        assignee_birthday: parseDate(assignee_birthday),
+      }),
+      updated_at: timezoneHelper(),
+    },
+    where: { id },
+  });
+  if (observation !== undefined) {
+    await this.generalservice.updateObservation(id, observation);
+    ({
+      where: {
+        citizen_id: id,
+        deleted_at: null,
       },
-      where: { id },
+      data: {
+        observation,
+      },
     });
-    return await this.getPatientById(id);
   }
+  return await this.getPatientById(id);
+}
 
   async toggleDelete(id: string): Promise<any> {
     const patient = await this.getPatientById(id, true);
@@ -93,6 +126,18 @@ export class PatientService {
     if (!patient) throw new BadRequestException('Paciente no encontrado');
     if (patient.deleted_at && !toggle)
       throw new BadRequestException('Paciente eliminado');
-    return patient;
+    const general = await this.prisma.general.findFirst({
+      where: {
+        citizen_id: id,
+        deleted_at: null,
+      },
+      select: {
+        observation: true,
+      },
+    });
+    return {
+      ...patient,
+      observation: general?.observation || null,
+    };
   }
 }
