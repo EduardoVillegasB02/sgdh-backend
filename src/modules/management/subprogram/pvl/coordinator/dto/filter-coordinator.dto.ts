@@ -1,11 +1,16 @@
-import { IsBoolean, IsOptional, IsString, IsUUID } from 'class-validator';
+import { IsBoolean, IsEnum, IsOptional, IsString, IsUUID } from 'class-validator';
 import { SearchDto } from '../../../../../../common/dto';
 import { Transform } from 'class-transformer';
+import { Sex } from '@prisma/client';
 
 export class FilterCoordinatorDto extends SearchDto {
   @IsOptional()
   @IsUUID()
   coordinator_id?: string;
+
+  @IsOptional()
+  @IsEnum(Sex)
+  sex?: Sex;
 
   @IsOptional()
   @IsString()

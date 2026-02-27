@@ -1,7 +1,7 @@
 import { FilterCoordinatorDto } from '../dto';
 
 export function filterCoordinator(dto: FilterCoordinatorDto): any {
-  const { search, age, age_min, age_max, birthday, month, phone, ...pagination } = dto;
+  const { search, age, age_min, age_max, birthday, month, phone, sex, ...pagination } = dto;
   const where: any = { deleted_at: null };
   if (search)
     where.OR = [
@@ -93,6 +93,9 @@ export function filterCoordinator(dto: FilterCoordinatorDto): any {
         ],
       },
     ];
+  }
+  if (sex) {
+  where.sex = sex;
   }
   return {
     where,

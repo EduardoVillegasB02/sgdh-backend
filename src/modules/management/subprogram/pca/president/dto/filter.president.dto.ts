@@ -1,4 +1,4 @@
-import { Modality } from '@prisma/client';
+import { Modality, Sex } from '@prisma/client';
 import { IsBoolean, IsEnum, IsOptional, IsString } from 'class-validator';
 import { SearchDto } from '../../../../../../common/dto';
 import { Transform } from 'class-transformer';
@@ -11,6 +11,10 @@ export class FilterPresidentDto extends SearchDto {
   @IsOptional()
   @IsString()
   age?: string;
+
+  @IsOptional()
+  @IsEnum(Sex)
+  sex?: Sex;
 
   @IsOptional()
   @IsString()

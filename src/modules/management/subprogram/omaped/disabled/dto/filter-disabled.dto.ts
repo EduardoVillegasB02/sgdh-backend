@@ -1,4 +1,4 @@
-import { Degree } from '@prisma/client';
+import { Degree, Sex } from '@prisma/client';
 import { IsBoolean, IsEnum, IsOptional, IsString } from 'class-validator';
 import { SearchDto } from '../../../../../../common/dto';
 import { Transform } from 'class-transformer';
@@ -7,6 +7,10 @@ export class FilterDisabledDto extends SearchDto {
   @IsOptional()
   @IsEnum(Degree)
   degree?: Degree;
+
+  @IsOptional()
+  @IsEnum(Sex)
+  sex?: Sex;
 
   @IsOptional()
   @IsString()

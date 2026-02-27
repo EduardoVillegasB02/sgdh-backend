@@ -1,11 +1,16 @@
-import { IsBoolean, IsOptional, IsString } from 'class-validator';
+import { IsBoolean, IsEnum, IsOptional, IsString } from 'class-validator';
 import { SearchDto } from '../../../../../../common/dto';
 import { Transform } from 'class-transformer';
+import { Sex } from '@prisma/client';
 
 export class FilterMotherDto extends SearchDto {
   @IsOptional()
   @IsString()
   age?: string;
+
+  @IsOptional()
+  @IsEnum(Sex)
+  sex?: Sex;
 
   @IsOptional()
   @IsString()
