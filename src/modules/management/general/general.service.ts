@@ -1,13 +1,16 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
-import { Send } from '@prisma/client';
+import { General, Send } from '@prisma/client';
 import { FilterGeneralDto } from './dto';
 import { PrismaService } from '../../../prisma/prisma.service';
 import { filterGeneral } from './helpers';
 import { paginationHelper, timezoneHelper } from '../../../common/helpers';
+import { ObservationService } from 'src/common/services/observation.service';
 
 @Injectable()
 export class GeneralService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(private readonly prisma: PrismaService,
+  private readonly observationService: ObservationService
+  ) {}
 
   async findAll(dto: FilterGeneralDto): Promise<any> {
     const { where, pagination } = filterGeneral(dto);
@@ -16,16 +19,28 @@ export class GeneralService {
       {
         where,
         orderBy: { lastname: 'asc' },
-        include: {
-          module: {
-            select: {
-              name: true,
-            },
+        select: {
+        id: true,
+        name: true,
+        lastname: true,
+        dni: true,
+        phone: true,
+        birthday: true,
+        sex: true,
+        observation: true,
+        module: {
+          select: {
+            name: true,
           },
         },
+      }
       },
       pagination,
     );
+  }
+
+  async findOne(id: string): Promise<General> {
+      return await this.getCitizenById(id);
   }
 
   async getForMessage() {
@@ -79,9 +94,23 @@ export class GeneralService {
 
   private async getCitizenById(id: string) {
     const citizen = await this.prisma.general.findFirst({
-      where: { id },
+      where: {
+        deleted_at: null,
+        OR: [
+          { id },
+          { citizen_id: id },
+          { dni: id },
+        ],
+      },
     });
-    if (!citizen) throw new BadRequestException('Persona no encontrada');
+    if (!citizen) {
+      throw new BadRequestException('Persona no encontrada');
+    }
     return citizen;
+  }
+  
+  async updateObservation(citizen_id: string, observation: string) {
+    await this.observationService.syncObservation(citizen_id, observation);
+    return { success: true };
   }
 }
